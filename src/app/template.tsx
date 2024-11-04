@@ -19,22 +19,7 @@ export default function RootTemplate({
           }
         }
       }}>
-        <MainLayout
-          title='Sample Layout'
-          menuItems={[
-            {
-              icon: <AiFillBook />,
-              label: 'Home',
-              route: '/home'
-            },
-            {
-              icon: <AiFillBook />,
-              label: 'Charts',
-              route: '/charts'
-            }
-          ]}>
-          {children}
-        </MainLayout>
+        {children}
       </ConfigProvider>
     </ZustandHydration>
   )
