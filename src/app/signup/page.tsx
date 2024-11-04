@@ -2,10 +2,10 @@ import { Metadata } from 'next'
 import { Flex } from "antd"
 
 export const metadata: Metadata = {
-  title: 'Login'
+  title: 'Sign Up'
 }
 
-export default function LoginPage() {
+export default function SignUpPage() {
   return <>
     <Flex
       vertical
