@@ -31,15 +31,15 @@ const ExampleChart: FC<IProps> = ({ className }) => {
       },
     }
 
-    return <div className={`tw-w-full tw-h-[${240}px] tw-relative`}>
+    return <div className={`w-full h-[${240}px] relative`}>
       {!isReady && <ChartSkeleton className={cn(
-        "tw-w-full tw-h-full",
-        "tw-absolute tw-top-[50%] tw-left-[50%]",
-        "-tw-translate-x-1/2 -tw-translate-y-1/2"
+        "w-full h-full",
+        "absolute top-[50%] left-[50%]",
+        "-translate-x-1/2 -translate-y-1/2"
       )} />}
-      <div className={cn("tw-w-full tw-h-full", {
-        "tw-opacity-0": !isReady,
-        "tw-opacity-1": isReady
+      <div className={cn("w-full h-full", {
+        "opacity-0": !isReady,
+        "opacity-1": isReady
       })}>
         <Line {...config} />
       </div>

@@ -11,7 +11,7 @@ export default function SignUpPage() {
       vertical
       justify="center"
       align="center"
-      className="tw-h-full tw-w-full">
+      className="h-full w-full">
         <div></div>
     </Flex>
   </>
