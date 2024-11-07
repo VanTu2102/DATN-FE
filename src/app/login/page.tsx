@@ -138,8 +138,17 @@ export default function NextLoginPage () {
               </div>
             </form>
 
+            <div className="text-sm text-sky-500 font-semibold leading-6 w-full flex justify-center mt-2">
+              <Link
+                href="/signup"
+                className="hover:text-sky-600"
+              >
+                Bạn chưa có tài khoản? Tạo tài khoản mới
+              </Link>
+            </div>
+
             <div>
-              <div className="relative mt-10">
+              <div className="relative mt-8">
                 <div
                   className="absolute inset-0 flex items-center"
                   aria-hidden="true"
