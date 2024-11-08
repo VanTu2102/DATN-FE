@@ -14,11 +14,6 @@ export default function RootPrimary({
                     label: 'Home',
                     route: '/home'
                 },
-                {
-                    icon: <AiFillBook />,
-                    label: 'Charts',
-                    route: '/charts'
-                }
             ]}>
             <Guard />
             {children}
