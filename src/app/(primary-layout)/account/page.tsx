@@ -8,10 +8,10 @@ const disconnect = async () => {
 }
 
 
-const RegisterPage = () => {
+const AccountPage = () => {
   return (
-    <BodyPage register={register} disconnect={disconnect} signin={signin}></BodyPage>
+    <></>
   )
 };
 
-export default RegisterPage;
+export default AccountPage;

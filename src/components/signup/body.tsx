@@ -1,9 +1,13 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from 'next/navigation'
 
-export default function BodyPage({ register, disconnect }: { register: any, disconnect: any }) {
+export default function BodyPage({ register, disconnect, signin }: { register: any, disconnect: any, signin:any }) {
     const [error, setError] = useState("");
+    
+  const router = useRouter()
 
     const isValidEmail = (email: string) => {
         const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -28,7 +32,13 @@ export default function BodyPage({ register, disconnect }: { register: any, disc
             return;
         }
         const result = await register(email, password)
-        console.log(result)
+        if (result === 'Error') {
+            setError('Đăng ký không thành công')
+        }
+        else {
+            localStorage.setItem('access_token', await signin(email, password))
+            router.push('/account')
+        }
     };
 
     return (
