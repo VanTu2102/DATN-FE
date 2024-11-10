@@ -5,17 +5,41 @@ import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation'
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
+import environment from "@/util/environment";
+import { generateCodeChallenge, generateUUID } from "@/functions/oauth2/func";
+const codeVerifier = environment.CODE_VERIFY;
 
 export default function BodyPage({ disconnect, signin }: { disconnect: any, signin: any }) {
     const router = useRouter();
     const [error, setError] = useState("");
 
     useEffect(() => {
+        console.log(router)
     }, [router]);
 
     const isValidEmail = (email: string) => {
         const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
         return emailRegex.test(email);
+    };
+
+    const googleLogin = async () => {
+        generateCodeChallenge(codeVerifier).then((v: any) => {
+            const state = generateUUID()
+            localStorage.setItem("code_challenge", v)
+            localStorage.setItem("state", state)
+            const param = {
+                code_challenge_method: 'S256',
+                scope: 'email profile', // tells google what info you want
+                access_type: 'offline',
+                response_type: 'code',
+                client_id: environment.GOOGLE_CLIENT_ID, // clientID from step 1
+                redirect_uri: environment.REDIRECT_URL, // page that handles token request
+                code_challenge: v, // hashed/encoded PKCE challenge
+                state: state, // random guid that will be passed back to you
+            }
+            console.log(param)
+            router.push(`https://accounts.google.com/o/oauth2/v2/auth?code_challenge_method=S256&scope=email%20profile&access_type=offline&response_type=code&client_id=${environment.GOOGLE_CLIENT_ID}&redirect_uri=${environment.REDIRECT_URL}&code_challenge=${v}&state=${state}`)
+        })
     };
 
     const handleSubmit = async (e: any) => {
@@ -35,7 +59,7 @@ export default function BodyPage({ disconnect, signin }: { disconnect: any, sign
         }
         else {
             localStorage.setItem('access_token', result)
-            if(result.name){
+            if (result.name) {
                 router.push('/home')
                 return
             }
@@ -156,7 +180,8 @@ export default function BodyPage({ disconnect, signin }: { disconnect: any, sign
 
                         <div className="mt-6 grid grid-cols-2 gap-4">
                             <button
-                                onClick={() => {
+                                onClick={async () => {
+                                    await googleLogin()
                                 }}
                                 className="flex w-full items-center border border-gray-300 justify-center gap-3 rounded-md bg-white px-3 py-1.5 text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                             >
