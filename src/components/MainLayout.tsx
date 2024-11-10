@@ -38,15 +38,6 @@ const MainLayout: FC<IProps> = ({
   }
 
   return <AntdLayout style={{ height: '100dvh' }}>
-    <AntdLayout.Header className="
-      flex
-      gap-4
-      p-4
-      items-center
-      text-white">
-      <AiOutlineMenu className="cursor-pointer" size={24} onClick={() => setCollapsed(!collapsed)} />
-      <div className="text-xl">{title}</div>
-    </AntdLayout.Header>
     <AntdLayout hasSider >
       <AntdLayout.Sider
         width={240}
@@ -69,8 +60,17 @@ const MainLayout: FC<IProps> = ({
           onClick={(e) => handleMenuClicked(e.key)} />
       </AntdLayout.Sider>
       <AntdLayout.Content
-        className="overflow-auto p-4"
+        className="overflow-auto"
         style={{ height: 'calc(100dvh - 64px)' }}>
+        <AntdLayout.Header className="
+          flex
+          gap-4
+          p-4
+          items-center
+          text-white">
+          <AiOutlineMenu className="cursor-pointer" size={24} onClick={() => setCollapsed(!collapsed)} />
+          <div className="text-xl">{title}</div>
+        </AntdLayout.Header>
         <Guard />
         {children}
       </AntdLayout.Content>
