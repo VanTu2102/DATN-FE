@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import environment from "@/util/environment";
-import { generateCodeChallenge, generateUUID } from "@/functions/oauth2/func";
+import { generateCodeChallenge, generateUUID, requestToken } from "@/functions/oauth2/func";
 import { useSearchParams } from 'next/navigation'
 const codeVerifier = environment.CODE_VERIFY;
 
@@ -16,12 +16,27 @@ export default function BodyPage({ disconnect, signin }: { disconnect: any, sign
     const searchParams = useSearchParams()
     const state = searchParams.get('state')
     const code = searchParams.get('code')
-    if(state && code){
-        console.log(state === localStorage.getItem('state'), code, window.location.href)
-    }
 
     useEffect(() => {
-        // console.log(state === localStorage.getItem('state'), code, window.location.href)
+        if (state && code) {
+            if (state === localStorage.getItem('state')) {
+                requestToken({
+                    code: code,
+                    client_id: environment.GOOGLE_CLIENT_ID,
+                    client_secret: environment.GOOGLE_CLIENT_SECRET,
+                    redirect_uri: environment.REDIRECT_URL,
+                    grant_type: 'authorization_code',
+                    code_verifier: codeVerifier
+                }).then((v: any) => {
+                    localStorage.setItem('access_token', v.access_token)
+                    localStorage.setItem('expires_in', v.expires_in)
+                    localStorage.setItem('id_token', v.id_token)
+                    localStorage.setItem('refresh_token', v.refresh_token)
+                    localStorage.setItem('token_type', v.token_type)
+                    router.push('/home')
+                })
+            }
+        }
     }, []);
 
     const isValidEmail = (email: string) => {

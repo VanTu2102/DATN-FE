@@ -12,7 +12,6 @@ I created this template for my customer who have specific requirement to using N
 ## 🌟Support
 
 - Ant Design
-- TailwindCSS with `tw-` prefix.
 - AnimateCSS
 - MomentJs
 - Zustand
