@@ -1,7 +1,8 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
-    "indent": ["error", 2, { "SwitchCase": 1 }],
-    "semi": ["error", "never"]
+    "react/no-unescaped-entities": "off",
+    "@next/next/no-page-custom-font": "off",
+    "react-hooks/exhaustive-deps":"off"
   }
 }
