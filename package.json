@@ -9,8 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --fix",
-    "postinstall": "pnpm i --lockfile-only"
+    "lint": "next lint --fix"
   },
   "dependencies": {
     "@ant-design/plots": "^2.2.5",
