@@ -5,6 +5,7 @@ import { Layout as AntdLayout, Menu, theme } from 'antd'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { MenuItem } from "@/types/layout.type"
 import { usePathname, useRouter } from "next/navigation"
+import Guard from "./guard"
 
 interface IProps {
   title?: string,
@@ -65,11 +66,12 @@ const MainLayout: FC<IProps> = ({
           }}
           mode="inline"
           items={antdMenuItems}
-          onClick={(e) => handleMenuClicked(e.key)}/>
+          onClick={(e) => handleMenuClicked(e.key)} />
       </AntdLayout.Sider>
       <AntdLayout.Content
         className="overflow-auto p-4"
         style={{ height: 'calc(100dvh - 64px)' }}>
+        <Guard />
         {children}
       </AntdLayout.Content>
     </AntdLayout>
