@@ -14,7 +14,7 @@ export default function HomePage() {
         vertical
         justify="center"
         align="center"
-        className="tw-h-full tw-w-full">
+        className="h-full w-full">
         <IntroductionView />
       </Flex>
     </RootPrimary>
