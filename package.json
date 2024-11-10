@@ -9,7 +9,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --fix"
+    "lint": "next lint --fix",
+    "postinstall": "pnpm install --no-frozen-lockfile"
   },
   "dependencies": {
     "@ant-design/plots": "^2.2.5",
