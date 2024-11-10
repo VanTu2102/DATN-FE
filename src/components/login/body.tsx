@@ -7,15 +7,22 @@ import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import environment from "@/util/environment";
 import { generateCodeChallenge, generateUUID } from "@/functions/oauth2/func";
+import { useSearchParams } from 'next/navigation'
 const codeVerifier = environment.CODE_VERIFY;
 
 export default function BodyPage({ disconnect, signin }: { disconnect: any, signin: any }) {
     const router = useRouter();
     const [error, setError] = useState("");
+    const searchParams = useSearchParams()
+    const state = searchParams.get('state')
+    const code = searchParams.get('code')
+    if(state && code){
+        console.log(state === localStorage.getItem('state'), code, window.location.href)
+    }
 
     useEffect(() => {
-        console.log(router)
-    }, [router]);
+        // console.log(state === localStorage.getItem('state'), code, window.location.href)
+    }, []);
 
     const isValidEmail = (email: string) => {
         const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -27,17 +34,6 @@ export default function BodyPage({ disconnect, signin }: { disconnect: any, sign
             const state = generateUUID()
             localStorage.setItem("code_challenge", v)
             localStorage.setItem("state", state)
-            const param = {
-                code_challenge_method: 'S256',
-                scope: 'email profile', // tells google what info you want
-                access_type: 'offline',
-                response_type: 'code',
-                client_id: environment.GOOGLE_CLIENT_ID, // clientID from step 1
-                redirect_uri: environment.REDIRECT_URL, // page that handles token request
-                code_challenge: v, // hashed/encoded PKCE challenge
-                state: state, // random guid that will be passed back to you
-            }
-            console.log(param)
             router.push(`https://accounts.google.com/o/oauth2/v2/auth?code_challenge_method=S256&scope=email%20profile&access_type=offline&response_type=code&client_id=${environment.GOOGLE_CLIENT_ID}&redirect_uri=${environment.REDIRECT_URL}&code_challenge=${v}&state=${state}`)
         })
     };
