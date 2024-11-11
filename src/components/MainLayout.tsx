@@ -1,7 +1,7 @@
 'use client'
 
 import { FC, ReactNode, useMemo, useState } from "react"
-import { Layout as AntdLayout, Menu, theme } from 'antd'
+import { Layout as AntdLayout, Button, Menu, theme } from 'antd'
 import { AiFillBook, AiOutlineMenu } from 'react-icons/ai'
 import { MenuItem } from "@/types/layout.type"
 import { usePathname, useRouter } from "next/navigation"
@@ -73,10 +73,14 @@ const MainLayout: FC<IProps> = ({
       <AntdLayout.Content
         className="overflow-auto"
         style={{ height: 'calc(100dvh - 64px)' }}>
-        <AntdLayout.Header className="flex gap-2 p-4 items-center border-r bg-white border-[#c9c9c9] shadow-lg text-black">
+        <AntdLayout.Header className="flex justify-between gap-2 p-4 items-center border-r bg-white border-[#c9c9c9] shadow-lg text-black">
           <div className="flex justify-center items-center cursor-pointer p-2 font-semibold" onClick={() => setCollapsed(!collapsed)} >
             <AiOutlineMenu className="cursor-pointer" size={14} />
             <div className="text-[14px] ml-2">{title}</div>
+          </div>
+          <div>
+            <Button type="primary" className="mr-2 text-[14px] font-semibold">Record</Button>
+            <Button type="default" className="text-[14px] font-semibold">Import</Button>
           </div>
         </AntdLayout.Header>
         <Guard />
