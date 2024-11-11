@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import { Flex } from "antd"
 import IntroductionView from "@/views/IntroductionView"
 import MainLayout from '@/components/MainLayout'
-import { AiFillBook } from 'react-icons/ai'
 
 export const metadata: Metadata = {
   title: 'Next.js - Home'
@@ -10,15 +9,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <MainLayout
-      title='Sample Layout'
-      menuItems={[
-        {
-          icon: <AiFillBook />,
-          label: 'Home',
-          route: '/home'
-        },
-      ]}>
+    <MainLayout>
       <Flex
         vertical
         justify="center"
