@@ -1,4 +1,4 @@
-import RootPrimary from "@/components/MainRoot";
+import MainLayout from "@/components/MainLayout";
 import { Flex } from "antd";
 import prisma from 'src/actions/db'
 
@@ -10,7 +10,7 @@ const disconnect = async () => {
 
 const AccountPage = () => {
   return (
-    <RootPrimary>
+    <MainLayout>
       <Flex
         vertical
         justify="center"
@@ -18,7 +18,7 @@ const AccountPage = () => {
         className="h-full w-full">
             <></>
       </Flex>
-    </RootPrimary>
+    </MainLayout>
   )
 };
 

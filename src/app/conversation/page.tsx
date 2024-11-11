@@ -4,10 +4,10 @@ import IntroductionView from "@/views/IntroductionView"
 import MainLayout from '@/components/MainLayout'
 
 export const metadata: Metadata = {
-  title: 'Home'
+  title: 'Conversation'
 }
 
-export default function HomePage() {
+export default function ConversationPage() {
   return (
     <MainLayout>
       <Flex

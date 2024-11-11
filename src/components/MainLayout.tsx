@@ -50,7 +50,7 @@ const MainLayout: FC<IProps> = ({
       <AntdLayout.Sider
         width={240}
         style={{ padding: 0 }}
-        className={`border-r border-[#c9c9c9] shadow-lg overflow-y-auto`}
+        className={`border-r border-[#c9c9c9] shadow-lg ${menuItems.length > 5 ? 'overflow-y-auto' : ''}`}
         collapsible
         breakpoint="md"
         collapsedWidth={0}
@@ -61,18 +61,20 @@ const MainLayout: FC<IProps> = ({
           selectedKeys={[pathname]}
           style={{
             height: 'max-content',
+            minHeight: 'calc(100% + 40px)',
             background: Layout?.triggerBg ?? '#fff',
             color: Layout?.triggerColor ?? '#000'
           }}
           mode="inline"
+          className="font-semibold text-black"
           items={antdMenuItems}
           onClick={(e) => handleMenuClicked(e.key)} />
       </AntdLayout.Sider>
       <AntdLayout.Content
         className="overflow-auto"
         style={{ height: 'calc(100dvh - 64px)' }}>
-        <AntdLayout.Header className="flex gap-2 p-4 items-center border-r border-[#c9c9c9] shadow-lg text-white">
-          <div className="flex justify-center items-center cursor-pointer p-2" onClick={() => setCollapsed(!collapsed)} >
+        <AntdLayout.Header className="flex gap-2 p-4 items-center border-r bg-white border-[#c9c9c9] shadow-lg text-black">
+          <div className="flex justify-center items-center cursor-pointer p-2 font-semibold" onClick={() => setCollapsed(!collapsed)} >
             <AiOutlineMenu className="cursor-pointer" size={14} />
             <div className="text-[14px] ml-2">{title}</div>
           </div>
