@@ -75,24 +75,27 @@ const MainLayout: FC<IProps> = ({
       setFileList([...fileList, file]);
       return false;
     },
-    onChange: (info)=>{
-      setFileList(info.fileList);
+    onChange: () => {
+      if (fileList.length > props.maxCount!) {
+        const newFileList = fileList.slice(fileList.length - props.maxCount!, fileList.length);
+        setFileList(newFileList);
+      }
     },
     fileList,
-    accept:'.wav,.mp3,.png'
+    accept: '.wav,.mp3,.png'
   };
-  
+
   const showModal = () => {
     setOpen(true);
   };
 
   const handleOk = () => {
     setConfirmLoading(true);
-    console.log(props)
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
+    console.log(fileList)
+    // setTimeout(() => {
+    //   setOpen(false);
+    //   setConfirmLoading(false);
+    // }, 2000);
   };
 
   const handleCancel = () => {
