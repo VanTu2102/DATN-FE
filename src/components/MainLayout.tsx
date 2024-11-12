@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { FC, ReactNode, useMemo, useState } from "react"
 import { Layout as AntdLayout, Button, Menu, theme, Modal, Upload, message } from 'antd'
@@ -8,19 +8,22 @@ import { MenuItem } from "@/types/layout.type"
 import { usePathname, useRouter } from "next/navigation"
 import Guard from "./guard"
 import type { GetProp, UploadFile, UploadProps } from 'antd';
-
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-
+import { saveRecord } from "@/controllers/conversation";
+import { RcFile } from "antd/es/upload";
 
 interface IProps {
-  title?: string,
   menuItems?: MenuItem[],
-  children?: ReactNode
+  children?: ReactNode,
+  title?: string
 }
 
+function arrayBufferToString(buffer: ArrayBuffer): string {
+  const decoder = new TextDecoder('utf-8');
+  return decoder.decode(buffer);
+}
 
 const MainLayout: FC<IProps> = ({
-  children, menuItems = [
+  title, children, menuItems = [
     {
       icon: <AiFillBook />,
       label: 'Home',
@@ -32,40 +35,15 @@ const MainLayout: FC<IProps> = ({
   const router = useRouter()
   const { token: { Layout } } = theme.useToken()
   const [collapsed, setCollapsed] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>("Home")
+  const [tit, setTitle] = useState<string>(title ? title : "Home")
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [uploading, setUploading] = useState(false);
-
-  // const handleUpload = () => {
-  //   const formData = new FormData();
-  //   fileList.forEach((file) => {
-  //     formData.append('files[]', file as FileType);
-  //   });
-  //   setUploading(true);
-  //   // You can use any AJAX library you like
-  //   fetch('https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload', {
-  //     method: 'POST',
-  //     body: formData,
-  //   })
-  //     .then((res) => res.json())
-  //     .then(() => {
-  //       setFileList([]);
-  //       message.success('upload successfully.');
-  //     })
-  //     .catch(() => {
-  //       message.error('upload failed.');
-  //     })
-  //     .finally(() => {
-  //       setUploading(false);
-  //     });
-  // };
+  const [fileList, setFileList] = useState<RcFile[]>([]);
 
   const props: UploadProps = {
     maxCount: 1,
     multiple: false,
-    onRemove: (file) => {
+    onRemove: (file: any) => {
       const index = fileList.indexOf(file);
       const newFileList = fileList.slice();
       newFileList.splice(index, 1);
@@ -82,7 +60,7 @@ const MainLayout: FC<IProps> = ({
       }
     },
     fileList,
-    accept: '.wav,.mp3,.png'
+    accept: '.wav,.mp3'
   };
 
   const showModal = () => {
@@ -91,11 +69,12 @@ const MainLayout: FC<IProps> = ({
 
   const handleOk = () => {
     setConfirmLoading(true);
-    console.log(fileList)
-    // setTimeout(() => {
-    //   setOpen(false);
-    //   setConfirmLoading(false);
-    // }, 2000);
+    fileList[0].arrayBuffer().then(async (v: any) => {
+      await saveRecord(fileList[0].name, arrayBufferToString(v))
+      setOpen(true)
+      setConfirmLoading(false)
+      router.push("/conversation")
+    })
   };
 
   const handleCancel = () => {
@@ -150,7 +129,7 @@ const MainLayout: FC<IProps> = ({
         <AntdLayout.Header className="flex justify-between gap-2 p-4 items-center border-r bg-white border-[#c9c9c9] shadow-lg text-black">
           <div className="flex justify-center items-center cursor-pointer p-2 font-semibold" onClick={() => setCollapsed(!collapsed)} >
             <AiOutlineMenu className="cursor-pointer" size={14} />
-            <div className="text-[14px] ml-2">{title}</div>
+            <div className="text-[14px] ml-2">{tit}</div>
           </div>
           <div>
             <Button type="primary" className="mr-2 text-[14px] font-semibold">Record</Button>
@@ -170,7 +149,7 @@ const MainLayout: FC<IProps> = ({
     >
       <Upload {...props}>
         <Button icon={<UploadOutlined />} className="flex">Select File</Button>
-        <p className="ant-upload-hint">
+        <p className="text-xs mt-2">
           Support for MP3, WAV
         </p>
       </Upload>

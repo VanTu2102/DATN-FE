@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ConversationPage() {
   return (
-    <MainLayout>
+    <MainLayout title='Conversation'>
       <Flex
         vertical
         justify="center"

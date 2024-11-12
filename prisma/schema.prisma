@@ -16,3 +16,20 @@ model Account {
   password String
   name  String?
 }
+
+model Conversation {
+  id    Int     @id @default(autoincrement())
+  name  String
+  data  Bytes
+  createdDate  DateTime @updatedAt()
+  transcription Transcription?
+}
+
+model Transcription {
+  id    Int     @id @default(autoincrement())
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  conversationId Int @unique
+  name  String
+  data  Json
+  createdDate  DateTime @updatedAt()
+}
