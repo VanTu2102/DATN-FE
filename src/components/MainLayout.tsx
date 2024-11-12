@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, ReactNode, useMemo, useState } from "react"
+import { FC, ReactNode, useEffect, useMemo, useState } from "react"
 import { Layout as AntdLayout, Button, Menu, theme, Modal, Upload, message } from 'antd'
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import { AiFillBook, AiOutlineMenu } from 'react-icons/ai'
@@ -70,10 +70,10 @@ const MainLayout: FC<IProps> = ({
   const handleOk = () => {
     setConfirmLoading(true);
     fileList[0].arrayBuffer().then(async (v: any) => {
-      await saveRecord(fileList[0].name, arrayBufferToString(v))
+      const conservation = await saveRecord(fileList[0].name, arrayBufferToString(v))
       setOpen(true)
       setConfirmLoading(false)
-      router.push("/conversation")
+      router.push(`/conversation?id=${conservation.id}`)
     })
   };
 
@@ -131,29 +131,31 @@ const MainLayout: FC<IProps> = ({
             <AiOutlineMenu className="cursor-pointer" size={14} />
             <div className="text-[14px] ml-2">{tit}</div>
           </div>
-          <div>
-            <Button type="primary" className="mr-2 text-[14px] font-semibold">Record</Button>
-            <Button type="default" className="text-[14px] font-semibold" onClick={showModal}>Import</Button>
-          </div>
+          {title !== "Conversation" ?
+            <><div>
+              <Button type="primary" className="mr-2 text-[14px] font-semibold">Record</Button>
+              <Button type="default" className="text-[14px] font-semibold" onClick={showModal}>Import</Button>
+            </div>
+              <Modal
+                title="Tải lên tệp"
+                open={open}
+                onOk={handleOk}
+                confirmLoading={confirmLoading}
+                onCancel={handleCancel}
+              >
+                <Upload {...props}>
+                  <Button icon={<UploadOutlined />} className="flex">Select File</Button>
+                  <p className="text-xs mt-2">
+                    Support for MP3, WAV
+                  </p>
+                </Upload>
+              </Modal></>
+            : <></>}
         </AntdLayout.Header>
         <Guard />
         {children}
       </AntdLayout.Content>
     </AntdLayout>
-    <Modal
-      title="Tải lên tệp"
-      open={open}
-      onOk={handleOk}
-      confirmLoading={confirmLoading}
-      onCancel={handleCancel}
-    >
-      <Upload {...props}>
-        <Button icon={<UploadOutlined />} className="flex">Select File</Button>
-        <p className="text-xs mt-2">
-          Support for MP3, WAV
-        </p>
-      </Upload>
-    </Modal>
   </AntdLayout>
 }
 
