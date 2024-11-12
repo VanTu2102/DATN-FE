@@ -1,17 +1,23 @@
 'use client'
 
 import { FC, ReactNode, useMemo, useState } from "react"
-import { Layout as AntdLayout, Button, Menu, theme } from 'antd'
+import { Layout as AntdLayout, Button, Menu, theme, Modal, Upload, message } from 'antd'
+import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import { AiFillBook, AiOutlineMenu } from 'react-icons/ai'
 import { MenuItem } from "@/types/layout.type"
 import { usePathname, useRouter } from "next/navigation"
 import Guard from "./guard"
+import type { GetProp, UploadFile, UploadProps } from 'antd';
+
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
 
 interface IProps {
   title?: string,
   menuItems?: MenuItem[],
   children?: ReactNode
 }
+
 
 const MainLayout: FC<IProps> = ({
   children, menuItems = [
@@ -27,6 +33,71 @@ const MainLayout: FC<IProps> = ({
   const { token: { Layout } } = theme.useToken()
   const [collapsed, setCollapsed] = useState<boolean>(false)
   const [title, setTitle] = useState<string>("Home")
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [uploading, setUploading] = useState(false);
+
+  // const handleUpload = () => {
+  //   const formData = new FormData();
+  //   fileList.forEach((file) => {
+  //     formData.append('files[]', file as FileType);
+  //   });
+  //   setUploading(true);
+  //   // You can use any AJAX library you like
+  //   fetch('https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload', {
+  //     method: 'POST',
+  //     body: formData,
+  //   })
+  //     .then((res) => res.json())
+  //     .then(() => {
+  //       setFileList([]);
+  //       message.success('upload successfully.');
+  //     })
+  //     .catch(() => {
+  //       message.error('upload failed.');
+  //     })
+  //     .finally(() => {
+  //       setUploading(false);
+  //     });
+  // };
+
+  const props: UploadProps = {
+    maxCount: 1,
+    multiple: false,
+    onRemove: (file) => {
+      const index = fileList.indexOf(file);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      setFileList(newFileList);
+    },
+    beforeUpload: (file) => {
+      setFileList([...fileList, file]);
+      return false;
+    },
+    onChange: (info)=>{
+      setFileList(info.fileList);
+    },
+    fileList,
+    accept:'.wav,.mp3,.png'
+  };
+  
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    setConfirmLoading(true);
+    console.log(props)
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
 
   const antdMenuItems = useMemo(() => {
     return menuItems.map((v) => ({
@@ -80,13 +151,27 @@ const MainLayout: FC<IProps> = ({
           </div>
           <div>
             <Button type="primary" className="mr-2 text-[14px] font-semibold">Record</Button>
-            <Button type="default" className="text-[14px] font-semibold">Import</Button>
+            <Button type="default" className="text-[14px] font-semibold" onClick={showModal}>Import</Button>
           </div>
         </AntdLayout.Header>
         <Guard />
         {children}
       </AntdLayout.Content>
     </AntdLayout>
+    <Modal
+      title="Tải lên tệp"
+      open={open}
+      onOk={handleOk}
+      confirmLoading={confirmLoading}
+      onCancel={handleCancel}
+    >
+      <Upload {...props}>
+        <Button icon={<UploadOutlined />} className="flex">Select File</Button>
+        <p className="ant-upload-hint">
+          Support for MP3, WAV
+        </p>
+      </Upload>
+    </Modal>
   </AntdLayout>
 }
 
