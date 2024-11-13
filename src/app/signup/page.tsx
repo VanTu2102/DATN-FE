@@ -1,16 +1,8 @@
 import BodyPage from "@/components/signup/body";
-import { register, signin } from "@/controllers/account";
-import prisma from 'src/actions/db'
-
-const disconnect = async () => {
-  "use server";
-  return await prisma.$disconnect()
-}
-
 
 const RegisterPage = () => {
   return (
-    <BodyPage register={register} disconnect={disconnect} signin={signin}></BodyPage>
+    <BodyPage></BodyPage>
   )
 };
 

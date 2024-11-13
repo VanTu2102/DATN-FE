@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation'
+import { register, signin } from "@/controllers/account";
 
-export default function BodyPage({ register, disconnect, signin }: { register: any, disconnect: any, signin:any }) {
+export default function BodyPage() {
     const [error, setError] = useState("");
     
   const router = useRouter()
@@ -36,7 +37,7 @@ export default function BodyPage({ register, disconnect, signin }: { register: a
             setError('Đăng ký không thành công')
         }
         else {
-            localStorage.setItem('access_token', await signin(email, password))
+            localStorage.setItem('access_token', (await signin(email, password)).toString())
             router.push('/account')
         }
     };

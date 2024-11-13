@@ -7,8 +7,9 @@ import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import environment from "@/util/environment";
 import { generateCodeChallenge, generateUUID, requestToken } from "@/functions/oauth2/func";
-import { signin } from "@/controllers/account";
+import { signin, register } from "@/controllers/account";
 import { useSearchParams } from 'next/navigation'
+import * as jwt from "jsonwebtoken"
 const codeVerifier = environment.CODE_VERIFY;
 
 export default function BodyPage() {
