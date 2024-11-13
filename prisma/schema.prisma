@@ -16,6 +16,7 @@ model Account {
   password String
   name  String?
   Conversation Conversation[]
+  type  String?
 }
 
 model Conversation {

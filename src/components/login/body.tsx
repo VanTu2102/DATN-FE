@@ -29,7 +29,9 @@ export default function BodyPage() {
                     redirect_uri: environment.REDIRECT_URL,
                     grant_type: 'authorization_code',
                     code_verifier: codeVerifier
-                }).then((v: any) => {
+                }).then(async (v: any) => {
+                    const user: any = jwt.decode(v.id_token)
+                    await register(user.email, "", user.name, "google") === "Error"
                     localStorage.setItem('access_token', v.access_token)
                     localStorage.setItem('expires_in', v.expires_in)
                     localStorage.setItem('id_token', v.id_token)

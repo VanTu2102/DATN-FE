@@ -2,8 +2,8 @@
 import Account from "@/models/Account";
 import * as jwt from "jsonwebtoken"
 
-export const register = async (email: any, password: any) => {
-    const acc = new Account(email, password)
+export const register = async (email: any, password: any, name?: string, type?: 'google' | undefined) => {
+    const acc = new Account(email, password, name, type)
     return acc.createAccount().then((v: any) => {
         return v
     }).catch((e: any) => {
@@ -13,7 +13,7 @@ export const register = async (email: any, password: any) => {
 
 export const signin = async (email: any, password: any) => {
     const acc = new Account(email, password)
-    const account = await acc.findAccount()
+    const account = await acc.findAccount(true)
     if (account?.password === password) {
         let objAcc: any = { ...acc }
         objAcc.password = undefined
