@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation'
 import { register, signin } from "@/controllers/account";
+import * as jwt from "jsonwebtoken"
 
 export default function BodyPage() {
     const [error, setError] = useState("");
@@ -37,7 +38,9 @@ export default function BodyPage() {
             setError('Đăng ký không thành công')
         }
         else {
-            localStorage.setItem('access_token', (await signin(email, password)).toString())
+            const result = await signin(email, password)
+            localStorage.setItem('access_token', result.toString())
+            localStorage.setItem('email', jwt.decode(result.toString())!.email)
             router.push('/account')
         }
     };

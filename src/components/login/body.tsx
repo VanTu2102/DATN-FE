@@ -37,6 +37,7 @@ export default function BodyPage() {
                     localStorage.setItem('id_token', v.id_token)
                     localStorage.setItem('refresh_token', v.refresh_token)
                     localStorage.setItem('token_type', v.token_type)
+                    localStorage.setItem('email', user.email)
                     router.push('/home')
                 })
             }
@@ -74,6 +75,7 @@ export default function BodyPage() {
         }
         else {
             localStorage.setItem('access_token', result)
+            localStorage.setItem('email', jwt.decode(result)!.email)
             router.push('/home')
         }
     };
