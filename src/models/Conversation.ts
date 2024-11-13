@@ -4,10 +4,12 @@ export default class Conversation {
     name: string
     data: ArrayBuffer
     createdDate: Date
-    constructor(name: string, data: ArrayBuffer, createdDate?: Date) {
+    accountId: number
+    constructor(accountId: number, name: string, data: ArrayBuffer, createdDate?: Date) {
         this.name = name
         this.data = data
         this.createdDate = createdDate ? createdDate : new Date()
+        this.accountId = accountId
     }
 
     saveRecord() {
@@ -17,6 +19,7 @@ export default class Conversation {
                 name: this.name,
                 createdDate: this.createdDate,
                 data: Buffer.from(this.data),
+                accountId: this.accountId
             }
         })
     }

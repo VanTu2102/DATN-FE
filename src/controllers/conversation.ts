@@ -6,8 +6,8 @@ function stringToArrayBuffer(str: string): ArrayBuffer {
     return encoder.encode(str).buffer;
 }
 
-export const saveRecord = async (name: string, data: string) => {
-    const conservation = new Conversation(name, stringToArrayBuffer(data), new Date())
+export const saveRecord = async (accountId: number, name: string, data: string) => {
+    const conservation = new Conversation(accountId, name, stringToArrayBuffer(data), new Date())
     return conservation.saveRecord().then((v: any) => {
         return v
     }).catch((e: any) => {

@@ -10,6 +10,7 @@ import Guard from "./guard"
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import { saveRecord } from "@/controllers/conversation";
 import { RcFile } from "antd/es/upload";
+import { findAccountByEmail } from "@/controllers/account";
 
 interface IProps {
   menuItems?: MenuItem[],
@@ -68,9 +69,14 @@ const MainLayout: FC<IProps> = ({
   };
 
   const handleOk = () => {
+    if(fileList.length<1){
+      message.warning('Chưa tải lên file')
+      return
+    }
     setConfirmLoading(true);
     fileList[0].arrayBuffer().then(async (v: any) => {
-      const conservation = await saveRecord(fileList[0].name, arrayBufferToString(v))
+      const acc = await findAccountByEmail(localStorage.getItem('email'))
+      const conservation = await saveRecord(acc!.id, fileList[0].name, arrayBufferToString(v))
       setOpen(true)
       setConfirmLoading(false)
       router.push(`/conversation?id=${conservation.id}`)

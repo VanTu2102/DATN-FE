@@ -4,7 +4,7 @@ import * as jwt from "jsonwebtoken"
 
 export const register = async (email: any, password: any, name?: string, type?: 'google' | undefined) => {
     const acc = new Account(email, password, name, type)
-    return acc.createAccount().then((v: any) => {
+    return acc.createAccount()!.then((v: any) => {
         return v
     }).catch((e: any) => {
         return "Error"
@@ -20,4 +20,10 @@ export const signin = async (email: any, password: any) => {
         return jwt.sign(objAcc, password)
     }
     return false
+};
+
+export const findAccountByEmail = async (email: any) => {
+    const acc = new Account(email)
+    const account = await acc.findAccount(false)
+    return account
 };
