@@ -15,6 +15,7 @@ model Account {
   email String  @unique
   password String
   name  String?
+  Conversation Conversation[]
 }
 
 model Conversation {
@@ -23,6 +24,8 @@ model Conversation {
   data  Bytes
   createdDate  DateTime @updatedAt()
   transcription Transcription?
+  account Account @relation(fields: [accountId], references: [id])
+  accountId Int
 }
 
 model Transcription {

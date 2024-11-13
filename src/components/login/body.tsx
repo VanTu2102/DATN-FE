@@ -7,10 +7,11 @@ import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import environment from "@/util/environment";
 import { generateCodeChallenge, generateUUID, requestToken } from "@/functions/oauth2/func";
+import { signin } from "@/controllers/account";
 import { useSearchParams } from 'next/navigation'
 const codeVerifier = environment.CODE_VERIFY;
 
-export default function BodyPage({ disconnect, signin }: { disconnect: any, signin: any }) {
+export default function BodyPage() {
     const router = useRouter();
     const [error, setError] = useState("");
     const searchParams = useSearchParams()
@@ -70,12 +71,7 @@ export default function BodyPage({ disconnect, signin }: { disconnect: any, sign
         }
         else {
             localStorage.setItem('access_token', result)
-            if (result.name) {
-                router.push('/home')
-                return
-            }
-            router.push('/account')
-            return
+            router.push('/home')
         }
     };
     return (

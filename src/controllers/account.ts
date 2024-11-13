@@ -1,8 +1,8 @@
+"use server";
 import Account from "@/models/Account";
 import * as jwt from "jsonwebtoken"
 
 export const register = async (email: any, password: any) => {
-    "use server";
     const acc = new Account(email, password)
     return acc.createAccount().then((v: any) => {
         return v
@@ -12,7 +12,6 @@ export const register = async (email: any, password: any) => {
 };
 
 export const signin = async (email: any, password: any) => {
-    "use server";
     const acc = new Account(email, password)
     const account = await acc.findAccount()
     if (account?.password === password) {
