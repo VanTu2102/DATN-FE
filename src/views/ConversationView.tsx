@@ -1,24 +1,33 @@
 'use client'
 
+import { findUniqueRecord } from "@/controllers/conversation"
 import { useStore } from "@/store"
 import { Button, Flex, Space } from "antd"
 import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
 import { FC, useEffect, useState } from "react"
 
 interface IProps { }
 
 const CoversationView: FC<IProps> = ({ }) => {
-    const { counter, setCounter } = useStore()
-    const [timeCounter, setTimeCounter] = useState<number>(0)
+    const searchParams = useSearchParams()
+    const router = useRouter()
+    const id = searchParams.get('id')
     useEffect(() => {
-        function tick() {
-            setTimeCounter((v) => v + 1)
+        if (id) {
+            findUniqueRecord(parseInt(id)).then((v: any) => {
+                console.log(v);
+                if(v){
+                }
+                else{
+                    router.push('/home')
+                }
+            })
         }
-        const intervalTick = setInterval(tick, 1000)
-        return () => {
-            clearInterval(intervalTick)
+        else {
+            router.push('/home')
         }
-    }, [])
+    }, [id])
     return <>
         <Flex justify="center" align="center">
             <></>

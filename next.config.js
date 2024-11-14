@@ -17,6 +17,9 @@ module.exports = withBundleAnalyzer(
     output: 'standalone',
     swcMinify: true,
     experimental: {
+      serverActions: {
+        bodySizeLimit: '2gb',
+      },
       forceSwcTransforms: true,
     },
     async redirects() {

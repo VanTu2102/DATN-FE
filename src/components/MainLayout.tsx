@@ -61,7 +61,7 @@ const MainLayout: FC<IProps> = ({
       }
     },
     fileList,
-    // accept: '.wav,.mp3'
+    accept: '.wav,.mp3'
   };
 
   const showModal = () => {
@@ -69,18 +69,22 @@ const MainLayout: FC<IProps> = ({
   };
 
   const handleOk = () => {
-    if(fileList.length<1){
+    if (fileList.length < 1) {
       message.warning('Chưa tải lên file')
       return
     }
     setConfirmLoading(true);
     fileList[0].arrayBuffer().then(async (v: any) => {
+      console.log(v)
       const acc = await findAccountByEmail(localStorage.getItem('email'))
       const conservation = await saveRecord(acc!.id, fileList[0].name, arrayBufferToString(v))
       setOpen(true)
       setConfirmLoading(false)
       router.push(`/conversation?id=${conservation.id}`)
     })
+      .catch((e: any) => {
+        console.error(e)
+      })
   };
 
   const handleCancel = () => {
