@@ -75,12 +75,11 @@ const MainLayout: FC<IProps> = ({
     }
     setConfirmLoading(true);
     fileList[0].arrayBuffer().then(async (v: any) => {
-      console.log(v)
       const acc = await findAccountByEmail(localStorage.getItem('email'))
-      const conservation = await saveRecord(acc!.id, fileList[0].name, arrayBufferToString(v))
+      const conversation = await saveRecord(acc!.id, fileList[0].name, arrayBufferToString(v))
       setOpen(true)
       setConfirmLoading(false)
-      router.push(`/conversation?id=${conservation.id}`)
+      router.push(`/conversation?id=${conversation.id}`)
     })
       .catch((e: any) => {
         console.error(e)
