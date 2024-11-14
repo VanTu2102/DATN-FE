@@ -61,7 +61,7 @@ const MainLayout: FC<IProps> = ({
       }
     },
     fileList,
-    accept: '.wav,.mp3'
+    // accept: '.wav,.mp3'
   };
 
   const showModal = () => {

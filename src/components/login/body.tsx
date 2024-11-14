@@ -7,7 +7,7 @@ import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import environment from "@/util/environment";
 import { generateCodeChallenge, generateUUID, requestToken } from "@/functions/oauth2/func";
-import { signin, register } from "@/controllers/account";
+import { signin, register, findAccountByEmail } from "@/controllers/account";
 import { useSearchParams } from 'next/navigation'
 import * as jwt from "jsonwebtoken"
 const codeVerifier = environment.CODE_VERIFY;
@@ -30,8 +30,11 @@ export default function BodyPage() {
                     grant_type: 'authorization_code',
                     code_verifier: codeVerifier
                 }).then(async (v: any) => {
-                    const user: any = jwt.decode(v.id_token)
-                    await register(user.email, "", user.name, "google") === "Error"
+                    const user: any = jwt.decode(v.id_token)!
+                    const exist_acc = await findAccountByEmail(user!.email)
+                    if (!exist_acc) {
+                        await register(user.email, "", user.name, "google")
+                    }
                     localStorage.setItem('access_token', v.access_token)
                     localStorage.setItem('expires_in', v.expires_in)
                     localStorage.setItem('id_token', v.id_token)
