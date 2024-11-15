@@ -57,7 +57,7 @@ const MainLayout: FC<IProps> = ({
       }
     },
     fileList,
-    accept: '.wav,.mp3'
+    accept: '.wav'
   };
 
   const showModal = () => {
@@ -158,7 +158,7 @@ const MainLayout: FC<IProps> = ({
                 <Upload {...props}>
                   <Button icon={<UploadOutlined />} className="flex">Select File</Button>
                   <p className="text-xs mt-2">
-                    Support for MP3, WAV
+                    Support for WAV file
                   </p>
                 </Upload>
               </Modal></>

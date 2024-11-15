@@ -24,7 +24,7 @@ const CoversationView: FC<IProps> = ({ }) => {
                 if (v) {
                     setData(v)
                     if (replay === "True") {
-
+                        
                     }
                     else {
 
