@@ -43,7 +43,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter }: IProps) => {
                 });
                 blobToUint8Array(audioBlob).then((unit8arr_data: any) => {
                     updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
-                        router.push(`/conversation?id=${data.id}&replay=True`)
+                        router.push(`/home?next=/conversation?id=${data.id},replay=True`)
                     })
                 })
             };
