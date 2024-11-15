@@ -73,15 +73,20 @@ const MainLayout: FC<IProps> = ({
     fileList[0].arrayBuffer().then((v: any) => {
       getAudioDurationFromBuffer(new Uint8Array(v)).then(async (time: any) => {
         const acc = await findAccountByEmail(localStorage.getItem('email'))
-        const conversation = await saveRecord(acc!.id, fileList[0].name, uint8ArrayToBase64(v), 'file', time)
+        const conversation = await saveRecord(acc!.id, fileList[0].name, 'file', uint8ArrayToBase64(v), time)
         setOpen(true)
         setConfirmLoading(false)
-        router.push(`/conversation?id=${conversation.id}`)
+        router.push(`/conversation?id=${conversation.id}&state=file`)
       })
     })
       .catch((e: any) => {
         console.error(e)
       })
+  };
+  const transcription_live = async () => {
+    const acc = await findAccountByEmail(localStorage.getItem('email'))
+    const conversation = await saveRecord(acc!.id, `Record at ${new Date().toLocaleString()}`, 'live', undefined, undefined)
+    router.push(`/conversation?id=${conversation.id}&state=live`)
   };
 
   const handleCancel = () => {
@@ -140,7 +145,7 @@ const MainLayout: FC<IProps> = ({
           </div>
           {title !== "Conversation" ?
             <><div>
-              <Button type="primary" className="mr-2 text-[14px] font-semibold">Record</Button>
+              <Button type="primary" className="mr-2 text-[14px] font-semibold" onClick={transcription_live}>Record</Button>
               <Button type="default" className="text-[14px] font-semibold" onClick={showModal}>Import</Button>
             </div>
               <Modal

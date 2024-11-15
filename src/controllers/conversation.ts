@@ -2,12 +2,10 @@
 import { base64ToUint8Array } from "@/functions/data_convert/data_convert";
 import Conversation from "@/models/Conversation";
 
-
-
 const conservation_global = new Conversation()
 
-export const saveRecord = async (accountId: number, name: string, data: string, type: 'file' | 'record', time: number) => {
-    const conservation = new Conversation(accountId, name, Buffer.from(base64ToUint8Array(data)), new Date(), type === "file" ? 1 : 2, time)
+export const saveRecord = async (accountId: number, name: string, type: 'file' | 'live', data?: string, time?: number) => {
+    const conservation = new Conversation(accountId, name, data ? Buffer.from(base64ToUint8Array(data)) : undefined, new Date(), type === "file" ? 1 : 2, time)
     return conservation.saveRecord()!.then((v: any) => {
         return v
     }).catch((e: any) => {

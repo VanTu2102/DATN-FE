@@ -37,6 +37,15 @@ export default class Conversation {
         return prisma.conversation.findUnique({
             where: {
                 id: id
+            },
+            select: {
+                id: true,
+                name: true,
+                createdDate: true,
+                type: true,
+                transcription: true,
+                data: true,
+                time: true
             }
         })
     }

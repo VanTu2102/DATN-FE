@@ -1,34 +1,35 @@
 'use client'
 
 import { findUniqueRecord } from "@/controllers/conversation"
-import { Button, Flex, Space } from "antd"
+import { Button, Flex, Space, Tabs } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FC, useEffect, useState } from "react"
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai'
 import { formatDuration } from "@/functions/time/time_convert"
+import ConversationTab from "@/components/conversation/conversation_tab"
 
+const { TabPane } = Tabs;
 interface IProps { }
 
 const CoversationView: FC<IProps> = ({ }) => {
     const [data, setData] = useState<any>()
-    const [dataAudioSource, setDataAudioSource] = useState<any>()
     const searchParams = useSearchParams()
     const router = useRouter()
+    const state = searchParams.get('state')
     const id = searchParams.get('id')
     useEffect(() => {
         if (id) {
-            findUniqueRecord(parseInt(id)).then((v: any) => {
-                console.log(v);
-                if (v) {
-                    setData(v)
-                    setDataAudioSource(Buffer.from(v.data.data))
-                    console.log(Buffer.from(v.data.data))
-                }
-                else {
-                    router.push('/home')
-                }
-            })
+            if (state === "file") {
+                findUniqueRecord(parseInt(id)).then((v: any) => {
+                    if (v) {
+                        setData(v)
+                    }
+                    else {
+                        router.push('/home')
+                    }
+                })
+            }
         }
         else {
             router.push('/home')
@@ -42,11 +43,15 @@ const CoversationView: FC<IProps> = ({ }) => {
                     <span className="text-xs py-2 text-[#6c6c6c] flex mr-3"><AiOutlineCalendar className="mr-1" size={16} />{data?.createdDate.toLocaleString()}</span>
                     <span className="text-xs py-2 text-[#6c6c6c] flex"><AiOutlineClockCircle className="mr-1" size={16} />{formatDuration(data?.time)}</span>
                 </div>
+                <Tabs defaultActiveKey="1">
+                    <TabPane tab="Conversation" key="1">
+                        <ConversationTab data={data} />
+                    </TabPane>
+                    <TabPane tab="Summary" disabled={data?.transcription === null} key="2">
+                        Summary
+                    </TabPane>
+                </Tabs>
             </div>
-            {/* <audio controls className="w-full bg-white mt-4 p-1 rounded-full">
-                <source src="horse.ogg" type="audio/ogg"></source>
-            </audio> */}
-            <></>
         </Flex>
     </>
 }
