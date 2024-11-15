@@ -24,7 +24,7 @@ model Conversation {
   name  String
   data  Bytes?
   createdDate  DateTime @updatedAt()
-  time Float
+  time Float?
   transcription Transcription?
   account Account @relation(fields: [accountId], references: [id])
   accountId Int
