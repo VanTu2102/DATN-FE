@@ -14,26 +14,30 @@ interface IProps { }
 
 const CoversationView: FC<IProps> = ({ }) => {
     const [data, setData] = useState<any>()
-    const searchParams = useSearchParams()
     const router = useRouter()
+    const searchParams = useSearchParams()
     const state = searchParams.get('state')
+    const replay = searchParams.get('replay')
     const id = searchParams.get('id')
     useEffect(() => {
         if (id) {
-            if (state === "file") {
-                findUniqueRecord(parseInt(id)).then((v: any) => {
-                    if (v) {
-                        setData(v)
-                    }
+            findUniqueRecord(parseInt(id)).then((v: any) => {
+                if (v) {
+                    setData(v)
+                    if (replay === "True") { }
                     else {
-                        router.push('/home')
+
                     }
-                })
-            }
+                }
+                else {
+                    router.push('/home')
+                }
+            })
         }
         else {
             router.push('/home')
         }
+
     }, [id])
     return <>
         <Flex justify="center" align="center" className="w-full">
