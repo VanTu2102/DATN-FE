@@ -18,9 +18,8 @@ interface IProps {
   title?: string
 }
 
-function arrayBufferToString(buffer: ArrayBuffer): string {
-  const decoder = new TextDecoder('utf-8');
-  return decoder.decode(buffer);
+function uint8ArrayToBase64(uint8Array: any) {
+  return Buffer.from(uint8Array).toString('base64');
 }
 
 const MainLayout: FC<IProps> = ({
@@ -76,7 +75,7 @@ const MainLayout: FC<IProps> = ({
     setConfirmLoading(true);
     fileList[0].arrayBuffer().then(async (v: any) => {
       const acc = await findAccountByEmail(localStorage.getItem('email'))
-      const conversation = await saveRecord(acc!.id, fileList[0].name, arrayBufferToString(v))
+      const conversation = await saveRecord(acc!.id, fileList[0].name, uint8ArrayToBase64(v))
       setOpen(true)
       setConfirmLoading(false)
       router.push(`/conversation?id=${conversation.id}`)
