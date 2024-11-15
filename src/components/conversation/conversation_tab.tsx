@@ -10,7 +10,9 @@ interface IProps {
 const ConversationTab: FC<IProps> = ({ data }: IProps) => {
     const searchParams = useSearchParams()
     const replay = searchParams.get('replay')
-    const [audioDom, setAudioDom] = useState<any>()
+    const [audioDom, setAudioDom] = useState<any>(
+        <audio controls className="w-full bg-white p-1 rounded-full">
+        </audio>)
     useEffect(() => {
         if (data && data.data) {
             const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
