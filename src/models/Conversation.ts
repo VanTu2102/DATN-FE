@@ -32,6 +32,20 @@ export default class Conversation {
         }
     }
 
+    updateRecord(id: number ) {
+        "use server";
+        return prisma.conversation.update({
+            where: {
+                id: id
+            },
+            data: {
+                name: this.name,
+                data: this.data,
+                time: this.time
+            }
+        })
+    }
+
     findUniqueRecord(id: number) {
         "use server";
         return prisma.conversation.findUnique({

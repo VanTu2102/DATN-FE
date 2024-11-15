@@ -23,12 +23,6 @@ const CoversationView: FC<IProps> = ({ }) => {
             findUniqueRecord(parseInt(id)).then((v: any) => {
                 if (v) {
                     setData(v)
-                    if (replay === "True") {
-                        
-                    }
-                    else {
-
-                    }
                 }
                 else {
                     router.push('/home')

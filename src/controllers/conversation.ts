@@ -22,3 +22,12 @@ export const findAllRecord = async (accountId: any) => {
     const record = await conservation_global.findAllRecord(accountId)
     return record
 };
+
+export const updateRecord = async (id: number, name?: string, data?: string, time?: number) => {
+    const conservation = new Conversation(undefined, name, data ? Buffer.from(base64ToUint8Array(data)) : undefined, undefined, undefined, time)
+    return conservation.updateRecord(id)!.then((v: any) => {
+        return v
+    }).catch((e: any) => {
+        return "Error"
+    })
+};
