@@ -160,8 +160,9 @@ const MainLayout: FC<IProps> = ({
               </Modal></>
             : <></>}
         </AntdLayout.Header>
-        <Guard />
-        {children}
+        <Guard>
+          {children}
+        </Guard>
       </AntdLayout.Content>
     </AntdLayout>
   </AntdLayout>

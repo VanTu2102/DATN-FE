@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { Flex } from "antd"
-import IntroductionView from "@/views/IntroductionView"
+import HomeView from "@/views/HomeView"
 import MainLayout from '@/components/MainLayout'
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export default function HomePage() {
         justify="center"
         align="center"
         className="h-full w-full">
-        <IntroductionView />
+        <HomeView />
       </Flex>
     </MainLayout>
   )

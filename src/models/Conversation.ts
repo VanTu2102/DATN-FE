@@ -35,6 +35,15 @@ export default class Conversation {
         })
     }
 
+    findAllRecord(accountId: number) {
+        "use server";
+        return prisma.conversation.findMany({
+            where: {
+                accountId: accountId
+            }
+        })
+    }
+
     // findAccount() {
     //     "use server";
     //     return prisma.account.findUnique({

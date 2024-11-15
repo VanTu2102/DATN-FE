@@ -11,6 +11,8 @@ function base64ToUint8Array(base64: any) {
     return bytes;
 }
 
+const conservation_global = new Conversation()
+
 export const saveRecord = async (accountId: number, name: string, data: string) => {
     const conservation = new Conversation(accountId, name, Buffer.from(base64ToUint8Array(data)), new Date())
     return conservation.saveRecord()!.then((v: any) => {
@@ -21,7 +23,11 @@ export const saveRecord = async (accountId: number, name: string, data: string) 
 };
 
 export const findUniqueRecord = async (id: any) => {
-    const conservation = new Conversation()
-    const record = await conservation.findUniqueRecord(id)
+    const record = await conservation_global.findUniqueRecord(id)
+    return record
+};
+
+export const findAllRecord = async (accountId: any) => {
+    const record = await conservation_global.findAllRecord(accountId)
     return record
 };
