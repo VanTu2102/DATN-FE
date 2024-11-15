@@ -10,16 +10,19 @@ interface IProps {
 const ConversationTab: FC<IProps> = ({ data }: IProps) => {
     const searchParams = useSearchParams()
     const replay = searchParams.get('replay')
-    const [URLSrc, setURLSrc] = useState<any>()
+    const [audioDom, setAudioDom] = useState<any>()
     useEffect(() => {
-        setURLSrc(URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' })))
-        console.log(data, URLSrc) 
+        const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
+        setAudioDom(
+            <audio controls className="w-full bg-white p-1 rounded-full">
+                <source src={url} type="audio/wav"></source>
+            </audio>
+        )
+        console.log(data, audioDom, url)
     }, [data])
     return (
         <div className="w-full h-max">
-            {URLSrc && replay === "True" ? <audio controls className="w-full bg-white p-1 rounded-full">
-                <source src={URLSrc} type="audio/wav"></source>
-            </audio> : <></>}
+            {replay === "True" ? audioDom : <></>}
             {!data?.transcription && replay === "True" ? <>
                 <Button type="primary" className="my-2 text-[14px] font-semibold">Phiên âm</Button>
             </> : <></>}
