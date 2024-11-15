@@ -22,7 +22,7 @@ model Account {
 model Conversation {
   id    Int     @id @default(autoincrement())
   name  String
-  data  Bytes
+  data  Bytes?
   createdDate  DateTime @updatedAt()
   time Float
   transcription Transcription?

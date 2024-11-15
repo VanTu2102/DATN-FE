@@ -18,7 +18,7 @@ export default class Conversation {
 
     saveRecord() {
         "use server";
-        if (this.name && this.data && this.accountId && this.type && this.time) {
+        if (this.name && this.accountId && this.type) {
             return prisma.conversation.create({
                 data: {
                     name: this.name,
