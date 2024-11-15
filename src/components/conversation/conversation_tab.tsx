@@ -13,11 +13,11 @@ const ConversationTab: FC<IProps> = ({ data }: IProps) => {
     const [URLSrc, setURLSrc] = useState<any>()
     useEffect(() => {
         setURLSrc(URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' })))
-        console.log(data, URLSrc)
+        console.log(data, URLSrc) 
     }, [data])
     return (
         <div className="w-full h-max">
-            {URLSrc ? <audio controls className="w-full bg-white p-1 rounded-full">
+            {URLSrc && replay === "True" ? <audio controls className="w-full bg-white p-1 rounded-full">
                 <source src={URLSrc} type="audio/wav"></source>
             </audio> : <></>}
             {!data?.transcription && replay === "True" ? <>
