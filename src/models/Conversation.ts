@@ -43,6 +43,16 @@ export default class Conversation {
         return prisma.conversation.findMany({
             where: {
                 accountId: accountId
+            },
+            select:{
+                id: true,
+                name: true,
+                createdDate: true,
+                accountId: false,
+                type: true,
+                transcription: true,
+                account: false,
+                data: false
             }
         })
     }
