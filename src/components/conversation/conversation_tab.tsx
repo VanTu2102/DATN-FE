@@ -8,7 +8,7 @@ import { FC, useEffect, useRef, useState } from "react"
 
 interface IProps {
     data: any,
-    setData:any,
+    setData: any,
     setTimeCounter: any
 }
 
@@ -37,15 +37,15 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 audioChunksRef.current.push(event.data);
             };
 
-            mediaRecorderRef.current.onstop = async (ev: any) => {
-                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+            mediaRecorderRef.current.onstop = () => {
                 stream.getTracks().forEach((track) => {
                     track.stop()
                 });
+                mediaRecorderRef.current = null
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
                 blobToUint8Array(audioBlob).then((unit8arr_data: any) => {
                     updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
-                        router.push(`/conversation?id=${data.id}&replay=True`)
-                        setData(v)
+                        window.location.href = `/conversation?id=${data.id}&replay=True`
                     })
                 })
             };
@@ -62,7 +62,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     };
 
     useEffect(() => {
-                if (data && data.data) {
+        if (data && data.data) {
             const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
             setAudioDom(
                 <audio controls className="w-full bg-white p-1 rounded-full">
