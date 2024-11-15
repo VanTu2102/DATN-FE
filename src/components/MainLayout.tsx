@@ -75,7 +75,7 @@ const MainLayout: FC<IProps> = ({
     setConfirmLoading(true);
     fileList[0].arrayBuffer().then(async (v: any) => {
       const acc = await findAccountByEmail(localStorage.getItem('email'))
-      const conversation = await saveRecord(acc!.id, fileList[0].name, uint8ArrayToBase64(v))
+      const conversation = await saveRecord(acc!.id, fileList[0].name, uint8ArrayToBase64(v), 'file')
       setOpen(true)
       setConfirmLoading(false)
       router.push(`/conversation?id=${conversation.id}`)

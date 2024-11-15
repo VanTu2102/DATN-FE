@@ -5,22 +5,25 @@ export default class Conversation {
     data?: Buffer
     createdDate?: Date
     accountId?: number
-    constructor(accountId?: number, name?: string, data?: Buffer, createdDate?: Date) {
+    type?: number
+    constructor(accountId?: number, name?: string, data?: Buffer, createdDate?: Date, type?: number) {
         this.name = name
         this.data = data
         this.createdDate = createdDate ? createdDate : new Date()
         this.accountId = accountId
+        this.type = type
     }
 
     saveRecord() {
         "use server";
-        if (this.name && this.data && this.accountId) {
+        if (this.name && this.data && this.accountId && this.type) {
             return prisma.conversation.create({
                 data: {
                     name: this.name,
                     createdDate: this.createdDate,
                     data: this.data,
-                    accountId: this.accountId
+                    accountId: this.accountId,
+                    type: this.type
                 }
             })
         }

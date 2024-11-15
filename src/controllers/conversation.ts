@@ -13,8 +13,8 @@ function base64ToUint8Array(base64: any) {
 
 const conservation_global = new Conversation()
 
-export const saveRecord = async (accountId: number, name: string, data: string) => {
-    const conservation = new Conversation(accountId, name, Buffer.from(base64ToUint8Array(data)), new Date())
+export const saveRecord = async (accountId: number, name: string, data: string, type: 'file' | 'record') => {
+    const conservation = new Conversation(accountId, name, Buffer.from(base64ToUint8Array(data)), new Date(), type === "file" ? 1 : 2)
     return conservation.saveRecord()!.then((v: any) => {
         return v
     }).catch((e: any) => {

@@ -27,6 +27,7 @@ model Conversation {
   transcription Transcription?
   account Account @relation(fields: [accountId], references: [id])
   accountId Int
+  type  Int
 }
 
 model Transcription {
