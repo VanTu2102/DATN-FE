@@ -42,6 +42,15 @@ export default class Conversation {
                 name: this.name,
                 data: this.data,
                 time: this.time
+            },
+            select: {
+                id: true,
+                name: true,
+                createdDate: true,
+                type: true,
+                transcription: true,
+                data: true,
+                time: true
             }
         })
     }

@@ -45,7 +45,7 @@ const CoversationView: FC<IProps> = ({ }) => {
                 </div>
                 <Tabs defaultActiveKey="1">
                     <TabPane tab="Conversation" key="1">
-                        <ConversationTab data={data} setTimeCounter={setTime}/>
+                        <ConversationTab data={data} setTimeCounter={setTime} setData={setData}/>
                     </TabPane>
                     {replay === "True" ? <TabPane tab="Summary" disabled={data?.transcription === null} key="2">
                         Summary

@@ -8,10 +8,11 @@ import { FC, useEffect, useRef, useState } from "react"
 
 interface IProps {
     data: any,
+    setData:any,
     setTimeCounter: any
 }
 
-const ConversationTab: FC<IProps> = ({ data, setTimeCounter }: IProps) => {
+const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) => {
     const searchParams = useSearchParams()
     const router = useRouter()
     const replay = searchParams.get('replay')
@@ -43,7 +44,8 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter }: IProps) => {
                 });
                 blobToUint8Array(audioBlob).then((unit8arr_data: any) => {
                     updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
-                        router.push(`/home?next=/conversation?id=${data.id},replay=True`)
+                        router.push(`/conversation?id=${data.id}&replay=True`)
+                        setData(v)
                     })
                 })
             };
@@ -60,7 +62,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter }: IProps) => {
     };
 
     useEffect(() => {
-        if (data && data.data) {
+                if (data && data.data) {
             const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
             setAudioDom(
                 <audio controls className="w-full bg-white p-1 rounded-full">
