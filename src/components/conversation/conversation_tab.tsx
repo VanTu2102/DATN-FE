@@ -8,9 +8,10 @@ import { FC, useEffect, useRef, useState } from "react"
 
 interface IProps {
     data: any,
+    setTimeCounter: any
 }
 
-const ConversationTab: FC<IProps> = ({ data }: IProps) => {
+const ConversationTab: FC<IProps> = ({ data, setTimeCounter }: IProps) => {
     const searchParams = useSearchParams()
     const router = useRouter()
     const replay = searchParams.get('replay')
@@ -74,7 +75,8 @@ const ConversationTab: FC<IProps> = ({ data }: IProps) => {
     useEffect(() => {
         if (replay === "False") {
             setTimeout(() => {
-                setTime(time + 0.1)
+                setTime(Math.round((time + 0.1) * 1000) / 1000)
+                setTimeCounter(time)
                 timeCounter.current = time
             }, 100);
         }

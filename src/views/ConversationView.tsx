@@ -14,6 +14,7 @@ interface IProps { }
 
 const CoversationView: FC<IProps> = ({ }) => {
     const [data, setData] = useState<any>()
+    const [time, setTime] = useState<number>(0)
     const router = useRouter()
     const searchParams = useSearchParams()
     const replay = searchParams.get('replay')
@@ -40,11 +41,11 @@ const CoversationView: FC<IProps> = ({ }) => {
                 <span className="text-2xl">{data?.name}</span>
                 <div className="flex items-center mt-2">
                     <span className="text-xs py-2 text-[#6c6c6c] flex mr-3"><AiOutlineCalendar className="mr-1" size={16} />{data?.createdDate.toLocaleString()}</span>
-                    <span className="text-xs py-2 text-[#6c6c6c] flex"><AiOutlineClockCircle className="mr-1" size={16} />{formatDuration(data?.time)}</span>
+                    <span className="text-xs py-2 text-[#6c6c6c] flex"><AiOutlineClockCircle className="mr-1" size={16} />{formatDuration(data?.time ? data?.time : time)}</span>
                 </div>
                 <Tabs defaultActiveKey="1">
                     <TabPane tab="Conversation" key="1">
-                        <ConversationTab data={data} />
+                        <ConversationTab data={data}  setTimeCounter={setTime}/>
                     </TabPane>
                     {replay === "True" ? <TabPane tab="Summary" disabled={data?.transcription === null} key="2">
                         Summary
