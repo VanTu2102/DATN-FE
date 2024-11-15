@@ -14,7 +14,6 @@ interface IProps {
 
 const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) => {
     const searchParams = useSearchParams()
-    const router = useRouter()
     const replay = searchParams.get('replay')
     const [audioDom, setAudioDom] = useState<any>(<audio controls className="w-full bg-white p-1 rounded-full"></audio>)
     const [time, setTime] = useState<number>(0)
