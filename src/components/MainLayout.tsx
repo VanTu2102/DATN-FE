@@ -1,7 +1,7 @@
 "use client"
 
-import { FC, ReactNode, useEffect, useMemo, useState } from "react"
-import { Layout as AntdLayout, Button, Menu, theme, Modal, Upload, message } from 'antd'
+import { FC, ReactNode, useEffect, useMemo, useState } from "react";
+import { Layout as AntdLayout, Button, Menu, theme, Modal, Upload, message } from 'antd';
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import { AiFillBook, AiOutlineMenu } from 'react-icons/ai'
 import { MenuItem } from "@/types/layout.type"
@@ -11,17 +11,14 @@ import type { GetProp, UploadFile, UploadProps } from 'antd';
 import { saveRecord } from "@/controllers/conversation";
 import { RcFile } from "antd/es/upload";
 import { findAccountByEmail } from "@/controllers/account";
+import { uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
+import { getAudioDurationFromBuffer } from "@/functions/audio/audio_process";
 
 interface IProps {
   menuItems?: MenuItem[],
   children?: ReactNode,
   title?: string
 }
-
-function uint8ArrayToBase64(uint8Array: any) {
-  return Buffer.from(uint8Array).toString('base64');
-}
-
 const MainLayout: FC<IProps> = ({
   title, children, menuItems = [
     {
@@ -73,12 +70,14 @@ const MainLayout: FC<IProps> = ({
       return
     }
     setConfirmLoading(true);
-    fileList[0].arrayBuffer().then(async (v: any) => {
-      const acc = await findAccountByEmail(localStorage.getItem('email'))
-      const conversation = await saveRecord(acc!.id, fileList[0].name, uint8ArrayToBase64(v), 'file')
-      setOpen(true)
-      setConfirmLoading(false)
-      router.push(`/conversation?id=${conversation.id}`)
+    fileList[0].arrayBuffer().then((v: any) => {
+      getAudioDurationFromBuffer(new Uint8Array(v)).then(async (time: any) => {
+        const acc = await findAccountByEmail(localStorage.getItem('email'))
+        const conversation = await saveRecord(acc!.id, fileList[0].name, uint8ArrayToBase64(v), 'file', time)
+        setOpen(true)
+        setConfirmLoading(false)
+        router.push(`/conversation?id=${conversation.id}`)
+      })
     })
       .catch((e: any) => {
         console.error(e)
@@ -134,7 +133,7 @@ const MainLayout: FC<IProps> = ({
       <AntdLayout.Content
         className="overflow-auto"
         style={{ height: 'calc(100dvh - 64px)' }}>
-        <AntdLayout.Header className="flex justify-between gap-2 p-4 items-center border-r bg-white border-[#c9c9c9] shadow-lg text-black">
+        <AntdLayout.Header className="flex justify-between gap-2 p-4 items-center border-b bg-white border-[#eeeeee] shadow-lg text-black">
           <div className="flex justify-center items-center cursor-pointer p-2 font-semibold" onClick={() => setCollapsed(!collapsed)} >
             <AiOutlineMenu className="cursor-pointer" size={14} />
             <div className="text-[14px] ml-2">{tit}</div>

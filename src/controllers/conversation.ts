@@ -1,20 +1,13 @@
 "use server"
+import { base64ToUint8Array } from "@/functions/data_convert/data_convert";
 import Conversation from "@/models/Conversation";
 
-function base64ToUint8Array(base64: any) {
-    const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
-}
+
 
 const conservation_global = new Conversation()
 
-export const saveRecord = async (accountId: number, name: string, data: string, type: 'file' | 'record') => {
-    const conservation = new Conversation(accountId, name, Buffer.from(base64ToUint8Array(data)), new Date(), type === "file" ? 1 : 2)
+export const saveRecord = async (accountId: number, name: string, data: string, type: 'file' | 'record', time: number) => {
+    const conservation = new Conversation(accountId, name, Buffer.from(base64ToUint8Array(data)), new Date(), type === "file" ? 1 : 2, time)
     return conservation.saveRecord()!.then((v: any) => {
         return v
     }).catch((e: any) => {

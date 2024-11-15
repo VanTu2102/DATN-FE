@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Conversation" ALTER COLUMN "time" SET DATA TYPE DOUBLE PRECISION;

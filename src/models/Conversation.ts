@@ -6,24 +6,27 @@ export default class Conversation {
     createdDate?: Date
     accountId?: number
     type?: number
-    constructor(accountId?: number, name?: string, data?: Buffer, createdDate?: Date, type?: number) {
+    time?: number
+    constructor(accountId?: number, name?: string, data?: Buffer, createdDate?: Date, type?: number, time?: number) {
         this.name = name
         this.data = data
         this.createdDate = createdDate ? createdDate : new Date()
         this.accountId = accountId
         this.type = type
+        this.time = time
     }
 
     saveRecord() {
         "use server";
-        if (this.name && this.data && this.accountId && this.type) {
+        if (this.name && this.data && this.accountId && this.type && this.time) {
             return prisma.conversation.create({
                 data: {
                     name: this.name,
                     createdDate: this.createdDate,
                     data: this.data,
                     accountId: this.accountId,
-                    type: this.type
+                    type: this.type,
+                    time: this.time
                 }
             })
         }
@@ -44,7 +47,7 @@ export default class Conversation {
             where: {
                 accountId: accountId
             },
-            select:{
+            select: {
                 id: true,
                 name: true,
                 createdDate: true,
@@ -52,7 +55,8 @@ export default class Conversation {
                 type: true,
                 transcription: true,
                 account: false,
-                data: false
+                data: false,
+                time: true
             }
         })
     }
