@@ -12,13 +12,15 @@ const ConversationTab: FC<IProps> = ({ data }: IProps) => {
     const replay = searchParams.get('replay')
     const [audioDom, setAudioDom] = useState<any>()
     useEffect(() => {
-        const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
-        setAudioDom(
-            <audio controls className="w-full bg-white p-1 rounded-full">
-                <source src={url} type="audio/wav"></source>
-            </audio>
-        )
-        console.log(data, audioDom, url)
+        if (data && data.data) {
+            const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
+            setAudioDom(
+                <audio controls className="w-full bg-white p-1 rounded-full">
+                    <source src={url} type="audio/wav"></source>
+                </audio>
+            )
+            console.log(data, audioDom, url)
+        }
     }, [data])
     return (
         <div className="w-full h-max">
