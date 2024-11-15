@@ -1,24 +1,29 @@
 'use client'
 
+import ConversationCard from "@/components/home/conversation_card"
 import { findAccountByEmail } from "@/controllers/account"
 import { findAllRecord } from "@/controllers/conversation"
-import { useStore } from "@/store"
 import { Button, Flex, Space } from "antd"
-import Image from "next/image"
-import { useRouter, useSearchParams } from "next/navigation"
 import { FC, useEffect, useState } from "react"
 
 interface IProps { }
 
 const HomeView: FC<IProps> = ({ }) => {
+    const [lstRecord, setLstRecord] = useState<any>([])
     useEffect(() => {
         findAccountByEmail(localStorage.getItem('email')).then(async (acc: any) => {
-            console.log(await findAllRecord(acc!.id))
+            setLstRecord(await findAllRecord(acc!.id))
         })
     }, [])
     return <>
-        <Flex justify="center" align="center">
-            <></>
+        <Flex justify="center" align="center" className="w-full flex-col pt-5">
+            {
+                lstRecord.map((v: any) => {
+                    return <div key={v.id} className="flex w-full p-4 py-2">
+                        <ConversationCard data={v}></ConversationCard>
+                    </div>
+                })
+            }
         </Flex>
     </>
 }
