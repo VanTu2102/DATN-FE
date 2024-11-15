@@ -16,7 +16,6 @@ const CoversationView: FC<IProps> = ({ }) => {
     const [data, setData] = useState<any>()
     const router = useRouter()
     const searchParams = useSearchParams()
-    const state = searchParams.get('state')
     const replay = searchParams.get('replay')
     const id = searchParams.get('id')
     useEffect(() => {
@@ -24,7 +23,9 @@ const CoversationView: FC<IProps> = ({ }) => {
             findUniqueRecord(parseInt(id)).then((v: any) => {
                 if (v) {
                     setData(v)
-                    if (replay === "True") { }
+                    if (replay === "True") {
+
+                    }
                     else {
 
                     }
@@ -51,9 +52,9 @@ const CoversationView: FC<IProps> = ({ }) => {
                     <TabPane tab="Conversation" key="1">
                         <ConversationTab data={data} />
                     </TabPane>
-                    <TabPane tab="Summary" disabled={data?.transcription === null} key="2">
+                    {replay === "True" ? <TabPane tab="Summary" disabled={data?.transcription === null} key="2">
                         Summary
-                    </TabPane>
+                    </TabPane> : <></>}
                 </Tabs>
             </div>
         </Flex>

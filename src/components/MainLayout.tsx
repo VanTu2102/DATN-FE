@@ -76,7 +76,7 @@ const MainLayout: FC<IProps> = ({
         const conversation = await saveRecord(acc!.id, fileList[0].name, 'file', uint8ArrayToBase64(v), time)
         setOpen(true)
         setConfirmLoading(false)
-        router.push(`/conversation?id=${conversation.id}&state=file&replay=True`)
+        router.push(`/conversation?id=${conversation.id}&replay=True`)
       })
     })
       .catch((e: any) => {
@@ -86,7 +86,7 @@ const MainLayout: FC<IProps> = ({
   const transcription_live = async () => {
     const acc = await findAccountByEmail(localStorage.getItem('email'))
     const conversation = await saveRecord(acc!.id, `Record at ${new Date().toLocaleString()}`, 'live', undefined, undefined)
-    router.push(`/conversation?id=${conversation.id}&state=live&replay=False`)
+    router.push(`/conversation?id=${conversation.id}&replay=False`)
   };
 
   const handleCancel = () => {
