@@ -96,11 +96,11 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                     const response = await fetch(`http://127.0.0.1:8000/transcription/file?id=${data.id}`)
                     const json = await response.json();
                     let new_data = { ...data }
-                    new_data.transcription = json.data
+                    new_data.transcription = json
                     setData(new_data)
                 }}>Phiên âm</Button>
             </> : <>
-                <TranscriptionBox data={data.transcription}></TranscriptionBox>
+                <TranscriptionBox data={data.transcription.data}></TranscriptionBox>
             </> : <></>
             }
         </div>
