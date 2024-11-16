@@ -1,6 +1,6 @@
 "use client";
 import { updateRecord } from "@/controllers/conversation";
-import { getAudioDurationFromBuffer } from "@/functions/audio/audio_process";
+import { blobToPCM, encodeWAV, getAudioDurationFromBuffer } from "@/functions/audio/audio_process";
 import { blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
 import { Button } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -41,12 +41,15 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                     track.stop()
                 });
                 mediaRecorderRef.current = null
-                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-                blobToUint8Array(audioBlob).then((unit8arr_data: any) => {
-                    updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
-                        window.location.href = `/conversation?id=${data.id}&replay=True`
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                blobToPCM(audioBlob).then(({ pcmData, sampleRate, numberOfChannels }) => {
+                    const wavBlob = encodeWAV(pcmData, sampleRate, numberOfChannels);
+                    blobToUint8Array(wavBlob).then((unit8arr_data: any) => {
+                        updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
+                            window.location.href = `/conversation?id=${data.id}&replay=True`
+                        })
                     })
-                })
+                });
             };
 
             mediaRecorderRef.current.start();
@@ -88,7 +91,9 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 <Button type="primary" className="my-2 text-[14px] font-semibold fixed bottom-4" onClick={stopRecording}>Dừng ghi</Button>
             </>}
             {!data?.transcription && replay === "True" ? <>
-                <Button type="primary" className="my-2 text-[14px] font-semibold">Phiên âm</Button>
+                <Button type="primary" className="my-2 text-[14px] font-semibold" onClick={() => {
+
+                }}>Phiên âm</Button>
             </> : <></>}
         </div>
     )
