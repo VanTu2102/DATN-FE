@@ -92,13 +92,4 @@ export default class Conversation {
             }
         })
     }
-
-    // findAccount() {
-    //     "use server";
-    //     return prisma.account.findUnique({
-    //         where: {
-    //             email: this.email
-    //         }
-    //     })
-    // }
 }

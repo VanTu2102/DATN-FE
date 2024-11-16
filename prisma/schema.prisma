@@ -35,7 +35,6 @@ model Transcription {
   id    Int     @id @default(autoincrement())
   conversation Conversation @relation(fields: [conversationId], references: [id])
   conversationId Int @unique
-  name  String
   data  Json
   createdDate  DateTime @updatedAt()
 }

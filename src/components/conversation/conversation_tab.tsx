@@ -64,6 +64,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     };
 
     useEffect(() => {
+        console.log(data)
         if (data && data.data) {
             const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
             setAudioDom(
