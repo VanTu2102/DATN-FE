@@ -91,7 +91,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
             {replay === "True" ? audioDom : <>
                 <Button type="primary" className="my-2 text-[14px] font-semibold fixed bottom-4" onClick={stopRecording}>Dừng ghi</Button>
             </>}
-            {!data?.transcription && replay === "True" ? <>
+            {data && replay === "True" ? !data?.transcription ? <>
                 <Button type="primary" className="my-2 text-[14px] font-semibold" onClick={async () => {
                     const response = await fetch(`http://127.0.0.1:8000/transcription/file?id=${data.id}`)
                     const json = await response.json();
@@ -101,7 +101,8 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 }}>Phiên âm</Button>
             </> : <>
                 <TranscriptionBox data={data.transcription}></TranscriptionBox>
-            </>}
+            </> : <></>
+            }
         </div>
     )
 }
