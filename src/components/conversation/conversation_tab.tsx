@@ -5,6 +5,7 @@ import { blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/d
 import { Button } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FC, useEffect, useRef, useState } from "react"
+import TranscriptionBox from "./transcription_box";
 
 interface IProps {
     data: any,
@@ -64,7 +65,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     };
 
     useEffect(() => {
-        console.log(data)
         if (data && data.data) {
             const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
             setAudioDom(
@@ -92,10 +92,16 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 <Button type="primary" className="my-2 text-[14px] font-semibold fixed bottom-4" onClick={stopRecording}>Dừng ghi</Button>
             </>}
             {!data?.transcription && replay === "True" ? <>
-                <Button type="primary" className="my-2 text-[14px] font-semibold" onClick={() => {
-
+                <Button type="primary" className="my-2 text-[14px] font-semibold" onClick={async () => {
+                    const response = await fetch(`http://127.0.0.1:8000/transcription/file?id=${data.id}`)
+                    const json = await response.json();
+                    let new_data = { ...data }
+                    new_data.transcription = json.data
+                    setData(new_data)
                 }}>Phiên âm</Button>
-            </> : <></>}
+            </> : <>
+                <TranscriptionBox data={data.transcription}></TranscriptionBox>
+            </>}
         </div>
     )
 }
