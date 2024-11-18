@@ -137,7 +137,7 @@ const MainLayout: FC<IProps> = ({
       </AntdLayout.Sider>
       <AntdLayout.Content
         className="overflow-auto"
-        style={{ height: 'calc(100dvh - 64px)' }}>
+        style={{ height: 'calc(100dvh)' }}>
         <AntdLayout.Header className="flex justify-between gap-2 p-4 items-center border-b bg-white border-[#eeeeee] shadow-lg text-black">
           <div className="flex justify-center items-center cursor-pointer p-2 font-semibold" onClick={() => setCollapsed(!collapsed)} >
             <AiOutlineMenu className="cursor-pointer" size={14} />
