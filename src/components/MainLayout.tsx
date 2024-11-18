@@ -31,7 +31,6 @@ const MainLayout: FC<IProps> = ({
   const pathname = usePathname()
   const router = useRouter()
   const { token: { Layout } } = theme.useToken()
-  const [collapsed, setCollapsed] = useState<boolean>(false)
   const [tit, setTitle] = useState<string>(title ? title : "Home")
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -113,15 +112,14 @@ const MainLayout: FC<IProps> = ({
   return <AntdLayout style={{ height: '100dvh', overflow: 'hidden' }}>
     <AntdLayout hasSider >
       <AntdLayout.Sider
-        width={240}
+        width={180}
         style={{ padding: 0 }}
         className={`border-r border-[#c9c9c9] shadow-lg ${menuItems.length > 5 ? 'overflow-y-auto' : ''}`}
         collapsible
         breakpoint="md"
         collapsedWidth={0}
-        collapsed={collapsed}
-        zeroWidthTriggerStyle={{ overflowY: 'scroll' }}
-        onCollapse={setCollapsed}>
+        collapsed={false}
+        zeroWidthTriggerStyle={{ overflowY: 'scroll' }}>
         <Menu
           selectedKeys={[pathname]}
           style={{
@@ -138,10 +136,9 @@ const MainLayout: FC<IProps> = ({
       <AntdLayout.Content
         className="overflow-auto"
         style={{ height: 'calc(100dvh)' }}>
-        <AntdLayout.Header className="flex justify-between gap-2 p-4 items-center border-b bg-white border-[#eeeeee] shadow-lg text-black">
-          <div className="flex justify-center items-center cursor-pointer p-2 font-semibold" onClick={() => setCollapsed(!collapsed)} >
-            <AiOutlineMenu className="cursor-pointer" size={14} />
-            <div className="text-[14px] ml-2">{tit}</div>
+        <AntdLayout.Header style={{width: 'calc(100dvw - 180px)'}} className="fixed top-0 flex justify-between gap-2 p-4 items-center border-b bg-white border-[#eeeeee] shadow-lg text-black">
+          <div className="flex justify-center items-center cursor-pointer p-2 font-semibold">
+            <div className="text-[14px]">{tit}</div>
           </div>
           {title !== "Conversation" ?
             <><div>
