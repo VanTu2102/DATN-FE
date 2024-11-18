@@ -12,13 +12,32 @@ interface IProps {
 }
 
 const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
-    console.log(data)
+    const [lst_speaker_map, setLstSpeakerMap] = useState<any>({})
+    const colors = [
+        "#B3E6E6", "#B3CCFF", "#E5CCFF", "#F0F0F0", "#FFB3B3", "#B3FFB3", "#B3D9FF", "#FFE0B3", "#DAB3FF",
+        "#B3FFFF", "#FFCCCC", "#CCE5FF", "#FFDAB3",
+        "#CCFFCC", "#FFCCCC", "#FFFFB3", "#E6CCFF",
+        "#D9FFB3", "#FFD9B3", "#D6E6F2"
+    ]
+
+    useEffect(() => {
+        if (data.length > 0) {
+            fetch(`http://127.0.0.1:8000/transcription/speaker_lst?id=${data[0]['transcriptionId']}`).then(async (response: any) => {
+                const lst_speaker = await response.json();
+                let lst: any = {}
+                lst_speaker.forEach((e: any, i: any) => {
+                    lst[e.speaker] = colors[i % colors.length]
+                })
+                setLstSpeakerMap(lst)
+            })
+        }
+    }, [data])
     return (
         <div className="w-full h-[60dvh] overflow-y-scroll">
             <div className="relative bg-white h-max">
                 <div className="divide-y divide-gray-300/50 border-t border-gray-300/50">
-                    <div className="space-y-6 py-8 text-[14px] leading-7 text-gray-600 h-[400px] overflow-y-auto">
-                        <ul className="space-y-4 px-4">
+                    <div className="space-y-6 py-4 text-[14px] leading-7 text-gray-600 h-[400px] overflow-y-auto">
+                        <ul className="space-y-4 px-2">
                             {data.map((item: any) => (
                                 <li
                                     key={item.id}
@@ -26,7 +45,7 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
                                         }`}
                                 >
                                     <span className="">{item.speaker}</span>
-                                    <p className="bg-gray-100 p-4 pt-2 pb-6 rounded-md relative">{item.transcript}
+                                    <p className="p-4 pt-2 pb-6 rounded-md relative" style={{ backgroundColor: lst_speaker_map[item.speaker] }}>{item.transcript}
                                         <span className="text-[10px] absolute bottom-0 right-[10px]">{Math.round(item.start_time)}s - {Math.round(item.end_time)}s</span>
                                     </p>
                                 </li>
