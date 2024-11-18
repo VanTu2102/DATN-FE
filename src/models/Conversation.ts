@@ -32,7 +32,7 @@ export default class Conversation {
         }
     }
 
-    updateRecord(id: number ) {
+    updateRecord(id: number) {
         "use server";
         return prisma.conversation.update({
             where: {
@@ -48,7 +48,13 @@ export default class Conversation {
                 name: true,
                 createdDate: true,
                 type: true,
-                transcription: true,
+                transcription: {
+                    select: {
+                        data: true,
+                        conversationId: true,
+                        id: true
+                    }
+                },
                 data: true,
                 time: true
             }
@@ -66,7 +72,13 @@ export default class Conversation {
                 name: true,
                 createdDate: true,
                 type: true,
-                transcription: true,
+                transcription: {
+                    select: {
+                        data: true,
+                        conversationId: true,
+                        id: true
+                    }
+                },
                 data: true,
                 time: true
             }
@@ -85,7 +97,7 @@ export default class Conversation {
                 createdDate: true,
                 accountId: false,
                 type: true,
-                transcription: true,
+                transcription: false,
                 account: false,
                 data: false,
                 time: true
