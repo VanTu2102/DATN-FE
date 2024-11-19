@@ -73,3 +73,33 @@ function writeString(view: any, offset: any, string: any) {
     view.setUint8(offset + i, string.charCodeAt(i));
   }
 }
+
+export const convertTo16kHz = async (audioBlob: any, audioContext: any) => {
+  const arrayBuffer = await audioBlob.arrayBuffer();
+  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+  const offlineAudioContext = new OfflineAudioContext(
+    1,
+    (audioBuffer.duration * 16000) | 0,
+    16000
+  );
+
+  const source = offlineAudioContext.createBufferSource();
+  source.buffer = audioBuffer;
+  source.connect(offlineAudioContext.destination);
+  source.start();
+
+  const renderedBuffer = await offlineAudioContext.startRendering();
+  return audioBufferToBlob(renderedBuffer);
+};
+
+const audioBufferToBlob = (buffer:any) => {
+  const wavArray = new Float32Array(buffer.length);
+  buffer.copyFromChannel(wavArray, 0, 0);
+
+  const wav = new DataView(new ArrayBuffer(buffer.length * 2));
+  for (let i = 0; i < wavArray.length; i++) {
+    wav.setInt16(i * 2, wavArray[i] * 0x7fff, true);
+  }
+
+  return new Blob([wav], { type: "audio/wav" });
+};

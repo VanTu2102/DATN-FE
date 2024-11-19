@@ -1,6 +1,6 @@
 "use client";
 import { updateRecord } from "@/controllers/conversation";
-import { blobToPCM, encodeWAV, getAudioDurationFromBuffer } from "@/functions/audio/audio_process";
+import { blobToPCM, encodeWAV } from "@/functions/audio/audio_process";
 import { blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
 import { Button } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
