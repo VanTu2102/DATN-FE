@@ -2,6 +2,7 @@
 import { updateRecord } from "@/controllers/conversation";
 import { blobToPCM, encodeWAV, getAudioDurationFromBuffer } from "@/functions/audio/audio_process";
 import { blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
+import environment from "@/util/environment";
 import { Button } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FC, useEffect, useRef, useState } from "react"
@@ -21,8 +22,8 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
     ]
 
     useEffect(() => {
-        if (data.length > 0) {
-            fetch(`http://127.0.0.1:8000/transcription/speaker_lst?id=${data[0]['transcriptionId']}`).then(async (response: any) => {
+        if (data && data.length > 0) {
+            fetch(`${environment.BE_URL}/transcription/speaker_lst?id=${data[0]['transcriptionId']}`).then(async (response: any) => {
                 const lst_speaker = await response.json();
                 let lst: any = {}
                 lst_speaker.forEach((e: any, i: any) => {
@@ -34,11 +35,11 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
     }, [data])
     return (
         <div className="w-full h-[60dvh] overflow-y-scroll">
-            <div className="relative bg-white h-max">
+            <div className="relative bg-white h-max pt-4">
                 <div className="divide-y divide-gray-300/50 border-t border-gray-300/50">
                     <div className="space-y-6 py-4 text-[14px] leading-7 text-gray-600 h-[400px] overflow-y-auto">
                         <ul className="space-y-4 px-2">
-                            {data.map((item: any) => (
+                            {data?.map((item: any) => (
                                 <li
                                     key={item.id}
                                     className={`flex flex-col justify-center items-start ${item.role === "user" ? "ml-10 justify-end" : "mr-10"

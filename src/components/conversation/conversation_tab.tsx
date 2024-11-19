@@ -6,6 +6,8 @@ import { Button } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FC, useEffect, useRef, useState } from "react"
 import TranscriptionBox from "./transcription_box";
+import environment from "@/util/environment";
+import useWebSocket from "@/hooks/useWebSocket";
 
 interface IProps {
     data: any,
@@ -18,9 +20,11 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     const replay = searchParams.get('replay')
     const [audioDom, setAudioDom] = useState<any>(<audio controls className="w-full bg-white p-1 rounded-full"></audio>)
     const [time, setTime] = useState<number>(0)
+    const [start, setStart] = useState<boolean>(false)
     const timeCounter = useRef<number>(0)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
+    const { messages, sendMessage } = useWebSocket(`${environment.WS_URL}/ws`);
 
     const startRecording = async () => {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -32,6 +36,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorderRef.current = new MediaRecorder(stream);
             audioChunksRef.current = [];
+            setStart(true)
 
             mediaRecorderRef.current.ondataavailable = (event) => {
                 audioChunksRef.current.push(event.data);
@@ -78,14 +83,14 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         }
     }, [data])
     useEffect(() => {
-        if (replay === "False") {
+        if (replay === "False" && start) {
             setTimeout(() => {
                 setTime(Math.round((time + 0.1) * 1000) / 1000)
                 setTimeCounter(time)
                 timeCounter.current = time
             }, 100);
         }
-    }, [time])
+    }, [time, start])
     return (
         <div className="w-full h-max">
             {replay === "True" ? audioDom : <>
@@ -96,7 +101,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                     !data?.transcription ?
                         <>
                             <Button type="primary" className="my-2 text-[14px] font-semibold" onClick={async () => {
-                                const response = await fetch(`http://127.0.0.1:8000/transcription/file?id=${data.id}`)
+                                const response = await fetch(`${environment.BE_URL}/transcription/file?id=${data.id}`)
                                 const json = await response.json();
                                 let new_data = { ...data }
                                 new_data.transcription = json
@@ -109,7 +114,9 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                         </>
                 )
                 :
-                <></>
+                <>
+                    <TranscriptionBox data={data?.transcription?.data}></TranscriptionBox>
+                </>
             }
         </div>
     )
