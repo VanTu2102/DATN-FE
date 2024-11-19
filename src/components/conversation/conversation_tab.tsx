@@ -37,7 +37,10 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorderRef.current = new MediaRecorder(stream);
                 audioChunksRef.current = [];
-                setStart(true)
+
+                mediaRecorderRef.current.onstart = ()=>{
+                    setStart(true)
+                }
 
                 mediaRecorderRef.current.ondataavailable = (event) => {
                     if (event.data.size > 0) {
@@ -46,6 +49,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 };
 
                 mediaRecorderRef.current.onstop = () => {
+                    setStart(false)
                     stream.getTracks().forEach((track) => {
                         track.stop()
                     });
@@ -61,7 +65,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                     });
                 };
 
-                mediaRecorderRef.current.start();
+                mediaRecorderRef.current.start(300);
             } catch (error) {
                 console.error("Không thể ghi âm:", error);
             }
