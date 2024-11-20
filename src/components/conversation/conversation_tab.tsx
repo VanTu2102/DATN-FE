@@ -36,7 +36,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 mediaRecorderRef.current = new MediaRecorder(stream);
                 audioChunksRef.current = [];
                 let headerChunk: any = null;
-                let firstChunk: any = null
 
                 mediaRecorderRef.current.ondataavailable = async (event) => {
                     if (event.data && event.data.size > 0) {
@@ -48,7 +47,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                         if (!headerChunk) {
                             headerChunk = arrayBuffer
                             blobToPCM(new Blob([arrayBuffer], { type: 'audio/webm' })).then(async (v) => {
-                                firstChunk = v.pcmData[0]
                                 const resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
                                 sendMessage(resampledPCM.buffer)
                             })
@@ -57,8 +55,9 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                             combinedBuffer.set(new Uint8Array(headerChunk), 0);
                             combinedBuffer.set(new Uint8Array(arrayBuffer), headerChunk.byteLength);
                             blobToPCM(new Blob([combinedBuffer.buffer], { type: 'audio/webm' })).then(async (v) => {
-                                const resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
-                                sendMessage(resampledPCM.slice(firstChunk / 3).buffer)
+                                let resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
+                                resampledPCM = resampledPCM.slice(resampledPCM.length * headerChunk.byteLength / (headerChunk.byteLength + arrayBuffer.byteLength))
+                                sendMessage(resampledPCM.buffer)
                             })
                         }
                     }
