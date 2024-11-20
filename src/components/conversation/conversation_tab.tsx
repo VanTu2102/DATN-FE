@@ -23,6 +23,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         const timeCounter = useRef<number>(0)
         const mediaRecorderRef = useRef<MediaRecorder | null>(null);
         const audioChunksRef = useRef<Blob[]>([]);
+        const audioContext = new AudioContext({ sampleRate: 48000 })
         const { messages, sendMessage } = useWebSocket(`${environment.WS_URL}/ws`);
 
         const startRecording = async () => {
@@ -36,15 +37,12 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 mediaRecorderRef.current = new MediaRecorder(stream);
                 audioChunksRef.current = [];
 
-                mediaRecorderRef.current.onstart = () => {
-                }
-
                 mediaRecorderRef.current.ondataavailable = async (event) => {
                     if (event.data && event.data.size > 0) {
                         timeCounter.current = Math.round(event.timecode) / 1000
                         setTimeCounter(timeCounter.current)
                         audioChunksRef.current.push(event.data);
-                        sendMessage(event.data)
+                        sendMessage(await convertTo16kHz(event.data, audioContext))
                     }
                 };
 
