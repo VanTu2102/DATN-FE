@@ -16,6 +16,7 @@ module.exports = withBundleAnalyzer(
   withAntdLess({
     output: 'standalone',
     swcMinify: true,
+    reactStrictMode: false,
     experimental: {
       serverActions: {
         bodySizeLimit: '2gb',

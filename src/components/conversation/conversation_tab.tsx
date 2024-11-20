@@ -38,14 +38,12 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 mediaRecorderRef.current = new MediaRecorder(stream);
                 audioChunksRef.current = [];
 
-                mediaRecorderRef.current.onstart = ()=>{
+                mediaRecorderRef.current.onstart = () => {
                     setStart(true)
                 }
 
                 mediaRecorderRef.current.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        audioChunksRef.current.push(event.data);
-                    }
+                    audioChunksRef.current.push(event.data);
                 };
 
                 mediaRecorderRef.current.onstop = () => {
@@ -77,18 +75,11 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         };
 
         useEffect(() => {
-            if (data && data.data) {
-                const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
-                setAudioDom(
-                    <audio controls className="w-full bg-white p-1 rounded-full">
-                        <source src={url} type="audio/wav"></source>
-                    </audio>
-                )
-            }
-            if (replay === "False" && !data?.data) {
+            if (replay === "False" && data) {
                 startRecording()
             }
         }, [data])
+
         useEffect(() => {
             if (replay === "False" && start) {
                 setTimeout(() => {
