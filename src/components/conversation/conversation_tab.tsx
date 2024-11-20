@@ -1,6 +1,6 @@
 "use client";
 import { updateRecord } from "@/controllers/conversation";
-import { blobToPCM, encodeWAV } from "@/functions/audio/audio_process";
+import { blobToPCM, convertTo16kHz, encodeWAV } from "@/functions/audio/audio_process";
 import { blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
 import { Button } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -20,8 +20,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     const replay = searchParams.get('replay')
     const [audioDom, setAudioDom] = useState<any>(<audio controls className="w-full bg-white p-1 rounded-full"></audio>)
     if (replay === "False") {
-        const [time, setTime] = useState<number>(0)
-        const [start, setStart] = useState<boolean>(false)
         const timeCounter = useRef<number>(0)
         const mediaRecorderRef = useRef<MediaRecorder | null>(null);
         const audioChunksRef = useRef<Blob[]>([]);
@@ -39,15 +37,18 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 audioChunksRef.current = [];
 
                 mediaRecorderRef.current.onstart = () => {
-                    setStart(true)
                 }
 
-                mediaRecorderRef.current.ondataavailable = (event) => {
-                    audioChunksRef.current.push(event.data);
+                mediaRecorderRef.current.ondataavailable = async (event) => {
+                    if (event.data && event.data.size > 0) {
+                        timeCounter.current = Math.round(event.timecode) / 1000
+                        setTimeCounter(timeCounter.current)
+                        audioChunksRef.current.push(event.data);
+                        sendMessage(event.data)
+                    }
                 };
 
                 mediaRecorderRef.current.onstop = () => {
-                    setStart(false)
                     stream.getTracks().forEach((track) => {
                         track.stop()
                     });
@@ -81,14 +82,8 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         }, [data])
 
         useEffect(() => {
-            if (replay === "False" && start) {
-                setTimeout(() => {
-                    setTime(Math.round((time + 0.1) * 1000) / 1000)
-                    setTimeCounter(time)
-                    timeCounter.current = time
-                }, 100);
-            }
-        }, [time, start])
+            console.log(messages)
+        }, [messages])
         return (
             <div className="w-full h-max">
                 <Button type="primary" className="my-2 text-[14px] font-semibold fixed bottom-4" onClick={stopRecording}>Dừng ghi</Button>
