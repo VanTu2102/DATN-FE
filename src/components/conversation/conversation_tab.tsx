@@ -1,6 +1,6 @@
 "use client";
 import { updateRecord } from "@/controllers/conversation";
-import { blobToPCM, convertTo16kHz, encodeWAV } from "@/functions/audio/audio_process";
+import { blobToPCM, encodeWAV, resamplePCM } from "@/functions/audio/audio_process";
 import { blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
 import { Button } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -23,7 +23,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         const timeCounter = useRef<number>(0)
         const mediaRecorderRef = useRef<MediaRecorder | null>(null);
         const audioChunksRef = useRef<Blob[]>([]);
-        const audioContext = new AudioContext({ sampleRate: 48000 })
         const { messages, sendMessage } = useWebSocket(`${environment.WS_URL}/ws`);
 
         const startRecording = async () => {
@@ -36,13 +35,32 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorderRef.current = new MediaRecorder(stream);
                 audioChunksRef.current = [];
+                let headerChunk: any = null;
+                let firstChunk: any = null
 
                 mediaRecorderRef.current.ondataavailable = async (event) => {
                     if (event.data && event.data.size > 0) {
                         timeCounter.current = Math.round(event.timecode) / 1000
                         setTimeCounter(timeCounter.current)
                         audioChunksRef.current.push(event.data);
-                        sendMessage(await convertTo16kHz(event.data, audioContext))
+
+                        const arrayBuffer = await event.data.arrayBuffer();
+                        if (!headerChunk) {
+                            headerChunk = arrayBuffer
+                            blobToPCM(new Blob([arrayBuffer], { type: 'audio/webm' })).then(async (v) => {
+                                firstChunk = v.pcmData[0]
+                                const resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
+                                sendMessage(resampledPCM.buffer)
+                            })
+                        } else {
+                            const combinedBuffer = new Uint8Array(headerChunk.byteLength + arrayBuffer.byteLength);
+                            combinedBuffer.set(new Uint8Array(headerChunk), 0);
+                            combinedBuffer.set(new Uint8Array(arrayBuffer), headerChunk.byteLength);
+                            blobToPCM(new Blob([combinedBuffer.buffer], { type: 'audio/webm' })).then(async (v) => {
+                                const resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
+                                sendMessage(resampledPCM.slice(firstChunk / 3).buffer)
+                            })
+                        }
                     }
                 };
 
@@ -62,7 +80,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                     });
                 };
 
-                mediaRecorderRef.current.start(300);
+                mediaRecorderRef.current.start(2000);
             } catch (error) {
                 console.error("Không thể ghi âm:", error);
             }

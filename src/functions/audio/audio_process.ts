@@ -4,46 +4,6 @@ function writeString(view: any, offset: any, string: any) {
     view.setUint8(offset + i, string.charCodeAt(i));
   }
 }
-function addWavHeader(audioData: any, sampleRate: number) {
-  const header = new ArrayBuffer(44);
-  const view = new DataView(header);
-
-  // RIFF chunk descriptor
-  writeString(view, 0, "RIFF");
-  view.setUint32(4, 36 + audioData.length * 2, true); // File size - 8 bytes
-  writeString(view, 8, "WAVE");
-
-  // FMT sub-chunk
-  writeString(view, 12, "fmt ");
-  view.setUint32(16, 16, true); // Subchunk size (16 for PCM)
-  view.setUint16(20, 1, true); // Audio format (1 for PCM)
-  view.setUint16(22, 1, true); // Number of channels
-  view.setUint32(24, sampleRate, true); // Sample rate
-  view.setUint32(28, sampleRate * 2, true); // Byte rate
-  view.setUint16(32, 2, true); // Block align
-  view.setUint16(34, 16, true); // Bits per sample
-
-  // Data sub-chunk
-  writeString(view, 36, "data");
-  view.setUint32(40, audioData.length * 2, true); // Subchunk2 size
-
-  const wav = new Uint8Array(header.byteLength + audioData.byteLength);
-  wav.set(new Uint8Array(header), 0);
-  wav.set(new Uint8Array(audioData), header.byteLength);
-
-  return wav.buffer;
-}
-const audioBufferToBlob = (buffer: any) => {
-  const wavArray = new Float32Array(buffer.length);
-  buffer.copyFromChannel(wavArray, 0, 0);
-
-  const wav = new DataView(new ArrayBuffer(buffer.length * 2));
-  for (let i = 0; i < wavArray.length; i++) {
-    wav.setInt16(i * 2, wavArray[i] * 0x7fff, true);
-  }
-
-  return new Blob([wav], { type: "audio/wav" });
-};
 /**
  * Lấy thời lượng của tệp âm thanh từ Buffer.
  * @param buffer Dữ liệu Buffer của tệp âm thanh.
@@ -112,20 +72,17 @@ export function encodeWAV(pcmData: Float32Array[], sampleRate: number, numberOfC
 
   return new Blob([view], { type: 'audio/wav' });
 }
-export const convertTo16kHz = async (audioBlob: any, audioContext: AudioContext) => {
-  const arrayBuffer = await audioBlob.arrayBuffer();
-  const audioBuffer = await audioContext.decodeAudioData(addWavHeader(arrayBuffer, audioContext.sampleRate));
-  const offlineAudioContext = new OfflineAudioContext(
-    1,
-    (audioBuffer.duration * 16000) | 0,
-    16000
-  );
+export async function resamplePCM(pcmData: any, originalSampleRate: number, targetSampleRate: number, numberOfChannels: number) {
+  const audioContext = new OfflineAudioContext(numberOfChannels, pcmData.length * targetSampleRate / originalSampleRate, targetSampleRate);
 
-  const source = offlineAudioContext.createBufferSource();
+  const audioBuffer = audioContext.createBuffer(numberOfChannels, pcmData.length, originalSampleRate);
+  audioBuffer.getChannelData(0).set(pcmData);
+
+  const source = audioContext.createBufferSource();
   source.buffer = audioBuffer;
-  source.connect(offlineAudioContext.destination);
-  source.start();
+  source.connect(audioContext.destination);
+  source.start(0);
 
-  const renderedBuffer = await offlineAudioContext.startRendering();
-  return audioBufferToBlob(renderedBuffer);
-};
+  const renderedBuffer = await audioContext.startRendering();
+  return renderedBuffer.getChannelData(0);
+}
