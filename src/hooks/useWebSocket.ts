@@ -30,7 +30,11 @@ const useWebSocket = (url: string) => {
         }
     };
 
-    return { messages, sendMessage };
+    const close = ()=>{
+        socket.current?.close()
+    }
+
+    return { messages, sendMessage, close };
 };
 
 export default useWebSocket;
