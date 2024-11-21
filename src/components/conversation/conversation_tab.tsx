@@ -1,5 +1,5 @@
 "use client";
-import { updateRecord } from "@/controllers/conversation";
+import { findUniqueRecord, updateRecord } from "@/controllers/conversation";
 import { blobToPCM, encodeWAV, resamplePCM } from "@/functions/audio/audio_process";
 import { blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
 import { Button } from "antd"
@@ -18,87 +18,104 @@ interface IProps {
 const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) => {
     const searchParams = useSearchParams()
     const replay = searchParams.get('replay')
+    const router = useRouter()
     const [audioDom, setAudioDom] = useState<any>(<audio controls className="w-full bg-white p-1 rounded-full"></audio>)
-    if (replay === "False") {
-        const timeCounter = useRef<number>(0)
-        const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-        const audioChunksRef = useRef<Blob[]>([]);
-        const { messages, sendMessage } = useWebSocket(`${environment.WS_URL}/ws`);
+    const timeCounter = useRef<number>(0)
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const audioChunksRef = useRef<Blob[]>([]);
+    const { messages, sendMessage } = useWebSocket(`${environment.WS_URL}/ws`);
+    useEffect(() => {
+        console.log(messages)
+    }, [messages])
 
-        const startRecording = async () => {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                console.error("Trình duyệt không hỗ trợ ghi âm");
-                return;
-            }
+    const startRecording = async () => {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.error("Trình duyệt không hỗ trợ ghi âm");
+            return;
+        }
 
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorderRef.current = new MediaRecorder(stream);
-                audioChunksRef.current = [];
-                let headerChunk: any = null;
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderRef.current = new MediaRecorder(stream);
+            audioChunksRef.current = [];
+            let headerChunk: any = null;
 
-                mediaRecorderRef.current.ondataavailable = async (event) => {
-                    if (event.data && event.data.size > 0) {
-                        timeCounter.current = Math.round(event.timecode) / 1000
-                        setTimeCounter(timeCounter.current)
-                        audioChunksRef.current.push(event.data);
+            mediaRecorderRef.current.ondataavailable = async (event) => {
+                if (event.data && event.data.size > 0) {
+                    timeCounter.current = Math.round(event.timecode) / 1000
+                    setTimeCounter(timeCounter.current)
+                    audioChunksRef.current.push(event.data);
 
-                        const arrayBuffer = await event.data.arrayBuffer();
-                        if (!headerChunk) {
-                            headerChunk = arrayBuffer
-                            blobToPCM(new Blob([arrayBuffer], { type: 'audio/webm' })).then(async (v) => {
-                                const resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
-                                sendMessage(resampledPCM.buffer)
-                            })
-                        } else {
-                            const combinedBuffer = new Uint8Array(headerChunk.byteLength + arrayBuffer.byteLength);
-                            combinedBuffer.set(new Uint8Array(headerChunk), 0);
-                            combinedBuffer.set(new Uint8Array(arrayBuffer), headerChunk.byteLength);
-                            blobToPCM(new Blob([combinedBuffer.buffer], { type: 'audio/webm' })).then(async (v) => {
-                                let resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
-                                resampledPCM = resampledPCM.slice(resampledPCM.length * headerChunk.byteLength / (headerChunk.byteLength + arrayBuffer.byteLength))
-                                sendMessage(resampledPCM.buffer)
-                            })
-                        }
+                    const arrayBuffer = await event.data.arrayBuffer();
+                    if (!headerChunk) {
+                        headerChunk = arrayBuffer
+                        blobToPCM(new Blob([arrayBuffer], { type: 'audio/webm' })).then(async (v) => {
+                            const resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
+                            sendMessage(resampledPCM.buffer)
+                        })
+                    } else {
+                        const combinedBuffer = new Uint8Array(headerChunk.byteLength + arrayBuffer.byteLength);
+                        combinedBuffer.set(new Uint8Array(headerChunk), 0);
+                        combinedBuffer.set(new Uint8Array(arrayBuffer), headerChunk.byteLength);
+                        blobToPCM(new Blob([combinedBuffer.buffer], { type: 'audio/webm' })).then(async (v) => {
+                            let resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
+                            resampledPCM = resampledPCM.slice(resampledPCM.length * headerChunk.byteLength / (headerChunk.byteLength + arrayBuffer.byteLength))
+                            sendMessage(resampledPCM.buffer)
+                        })
                     }
-                };
+                }
+            };
 
-                mediaRecorderRef.current.onstop = () => {
-                    stream.getTracks().forEach((track) => {
-                        track.stop()
-                    });
-                    mediaRecorderRef.current = null
-                    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-                    blobToPCM(audioBlob).then(({ pcmData, sampleRate, numberOfChannels }) => {
-                        const wavBlob = encodeWAV(pcmData, sampleRate, numberOfChannels);
-                        blobToUint8Array(wavBlob).then((unit8arr_data: any) => {
-                            updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
-                                window.location.href = `/conversation?id=${data.id}&replay=True`
+            mediaRecorderRef.current.onstop = () => {
+                stream.getTracks().forEach((track) => {
+                    track.stop()
+                });
+                mediaRecorderRef.current = null
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                blobToPCM(audioBlob).then(({ pcmData, sampleRate, numberOfChannels }) => {
+                    const wavBlob = encodeWAV(pcmData, sampleRate, numberOfChannels);
+                    blobToUint8Array(wavBlob).then((unit8arr_data: any) => {
+                        updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
+                            router.push(`/conversation?id=${data.id}&replay=True`)
+                            findUniqueRecord(data.id).then((v: any) => {
+                                setData(v)
                             })
                         })
-                    });
-                };
+                    })
+                });
+            };
 
-                mediaRecorderRef.current.start(2000);
-            } catch (error) {
-                console.error("Không thể ghi âm:", error);
-            }
-        };
-        const stopRecording = () => {
-            if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-                mediaRecorderRef.current.stop();
-            }
-        };
+            mediaRecorderRef.current.start(1000);
+        } catch (error) {
+            console.error("Không thể ghi âm:", error);
+        }
+    };
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+            mediaRecorderRef.current.stop();
+        }
+    };
 
-        useEffect(() => {
-            if (replay === "False" && data) {
+    useEffect(() => {
+        if (replay === "False") {
+            if (data) {
                 startRecording()
             }
-        }, [data])
+        }
+        else {
 
-        useEffect(() => {
-            console.log(messages)
-        }, [messages])
+            console.log(data)
+            if (data && data.data) {
+                const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
+                setAudioDom(
+                    <audio controls className="w-full bg-white p-1 rounded-full">
+                        <source src={url} type="audio/wav"></source>
+                    </audio>
+                )
+            }
+        }
+    }, [data])
+    if (replay === "False") {
         return (
             <div className="w-full h-max">
                 <Button type="primary" className="my-2 text-[14px] font-semibold fixed bottom-4" onClick={stopRecording}>Dừng ghi</Button>
@@ -115,17 +132,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         )
     }
     else {
-
-        useEffect(() => {
-            if (data && data.data) {
-                const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
-                setAudioDom(
-                    <audio controls className="w-full bg-white p-1 rounded-full">
-                        <source src={url} type="audio/wav"></source>
-                    </audio>
-                )
-            }
-        }, [data])
         return (
             <div className="w-full h-max">
                 {audioDom}
