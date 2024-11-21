@@ -21,9 +21,11 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     const router = useRouter()
     const [audioDom, setAudioDom] = useState<any>(<audio controls className="w-full bg-white p-1 rounded-full"></audio>)
     const timeCounter = useRef<number>(0)
+    const [time, setTime] = useState<number>(0)
+    const [state_record, setState] = useState<any>(null)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
-    const { messages, sendMessage } = useWebSocket(`${environment.WS_URL}/ws`);
+    const { messages, sendMessage, close } = useWebSocket(`${environment.WS_URL}/ws`);
     useEffect(() => {
         console.log(messages)
     }, [messages])
@@ -42,8 +44,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
 
             mediaRecorderRef.current.ondataavailable = async (event) => {
                 if (event.data && event.data.size > 0) {
-                    timeCounter.current = Math.round(event.timecode) / 1000
-                    setTimeCounter(timeCounter.current)
                     audioChunksRef.current.push(event.data);
 
                     const arrayBuffer = await event.data.arrayBuffer();
@@ -86,6 +86,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
             };
 
             mediaRecorderRef.current.start(1000);
+            setState(mediaRecorderRef.current?.state)
         } catch (error) {
             console.error("Không thể ghi âm:", error);
         }
@@ -94,7 +95,17 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
             mediaRecorderRef.current.stop();
         }
+        setState(mediaRecorderRef.current?.state)
     };
+    const pauseRecording = () => {
+        mediaRecorderRef.current?.pause()
+        setState(mediaRecorderRef.current?.state)
+    }
+
+    const resumeRecording = () => {
+        mediaRecorderRef.current?.resume()
+        setState(mediaRecorderRef.current?.state)
+    }
 
     useEffect(() => {
         if (replay === "False") {
@@ -103,8 +114,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
             }
         }
         else {
-
-            console.log(data)
             if (data && data.data) {
                 const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
                 setAudioDom(
@@ -115,10 +124,23 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
             }
         }
     }, [data])
+    useEffect(() => {
+        if (replay === "False" && state_record === 'recording') {
+            setTimeout(() => {
+                setTime(time + 1)
+                timeCounter.current = time
+                setTimeCounter(time)
+            }, 1000);
+        }
+    }, [time, state_record])
     if (replay === "False") {
         return (
             <div className="w-full h-max">
-                <Button type="primary" className="my-2 text-[14px] font-semibold fixed bottom-4" onClick={stopRecording}>Dừng ghi</Button>
+                <div className="flex fixed bottom-4">
+                    {state_record === "recording" ? <Button type="primary" className="my-2 text-[14px] mr-2 font-semibold" onClick={pauseRecording}>Tạm dừng</Button> : <></>}
+                    {state_record === "paused" ? <Button type="primary" className="my-2 text-[14px] mr-2 font-semibold" onClick={resumeRecording}>Tiếp tục</Button> : <></>}
+                    <Button type="primary" className="my-2 text-[14px] font-semibold" onClick={stopRecording}>Dừng ghi</Button>
+                </div>
                 {data && data?.transcription ?
                     (
                         <>
