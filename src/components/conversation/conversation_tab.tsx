@@ -25,9 +25,11 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     const [state_record, setState] = useState<any>(null)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
-    const { messages, sendMessage, close } = useWebSocket(`${environment.WS_URL}/ws`);
+    const { messages, sendMessage, close } = replay === "False" ? useWebSocket(`${environment.WS_URL}/ws`) : {};
     useEffect(() => {
-        console.log(messages)
+        if (messages) {
+            console.log(messages.length > 0 ? JSON.parse(messages[messages.length - 1]) : '')
+        }
     }, [messages])
 
     const startRecording = async () => {
@@ -51,7 +53,9 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                         headerChunk = arrayBuffer
                         blobToPCM(new Blob([arrayBuffer], { type: 'audio/webm' })).then(async (v) => {
                             const resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
-                            sendMessage(resampledPCM.buffer)
+                            if (sendMessage) {
+                                sendMessage(resampledPCM.buffer)
+                            }
                         })
                     } else {
                         const combinedBuffer = new Uint8Array(headerChunk.byteLength + arrayBuffer.byteLength);
@@ -60,7 +64,9 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                         blobToPCM(new Blob([combinedBuffer.buffer], { type: 'audio/webm' })).then(async (v) => {
                             let resampledPCM = await resamplePCM(v.pcmData[0], v.sampleRate, 16000, 1);
                             resampledPCM = resampledPCM.slice(resampledPCM.length * headerChunk.byteLength / (headerChunk.byteLength + arrayBuffer.byteLength))
-                            sendMessage(resampledPCM.buffer)
+                            if (sendMessage) {
+                                sendMessage(resampledPCM.buffer)
+                            }
                         })
                     }
                 }
