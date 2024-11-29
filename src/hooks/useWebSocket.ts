@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 const useWebSocket = (url: string) => {
     const [messages, setMessages] = useState<any[]>([]);
     const socket = useRef<WebSocket | null>(null);
-    let last_turn
+    let last_turn: any
 
     useEffect(() => {
         socket.current = new WebSocket(url);
@@ -12,7 +12,6 @@ const useWebSocket = (url: string) => {
         };
         socket.current.onmessage = (event) => {
             let message = JSON.parse(event.data)
-            last_turn = message.speaker
             if (message.speaker === last_turn) {
                 setMessages((prev: any) => {
                     let conversations = [...prev]
@@ -22,6 +21,7 @@ const useWebSocket = (url: string) => {
                 });
             }
             else {
+                last_turn = message.speaker
                 setMessages((prev: any) => [...prev, message]);
             }
         };
