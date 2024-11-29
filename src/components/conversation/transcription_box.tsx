@@ -14,6 +14,8 @@ interface IProps {
 
 const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
     const [lst_speaker_map, setLstSpeakerMap] = useState<any>({})
+    const searchParams = useSearchParams()
+    const replay = searchParams.get('replay')
     const colors = [
         "#B3E6E6", "#B3CCFF", "#E5CCFF", "#F0F0F0", "#FFB3B3", "#B3FFB3", "#B3D9FF", "#FFE0B3", "#DAB3FF",
         "#B3FFFF", "#FFCCCC", "#CCE5FF", "#FFDAB3",
@@ -22,7 +24,8 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
     ]
 
     useEffect(() => {
-        if (data && data.length > 0) {
+        console.log(data)
+        if (data && data.length > 0 && replay === "True") {
             fetch(`${environment.BE_URL}/transcription/speaker_lst?id=${data[0]['transcriptionId']}`).then(async (response: any) => {
                 const lst_speaker = await response.json();
                 let lst: any = {}
@@ -39,9 +42,9 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
                 <div className="divide-y divide-gray-300/50 border-t border-gray-300/50">
                     <div className="space-y-6 py-4 text-[14px] leading-7 text-gray-600 h-[400px] overflow-y-auto">
                         <ul className="space-y-4 px-2">
-                            {data?.map((item: any) => (
+                            {data?.map((item: any, index: number) => (
                                 <li
-                                    key={item.id}
+                                    key={index}
                                     className={`flex flex-col justify-center items-start ${item.role === "user" ? "ml-10 justify-end" : "mr-10"
                                         }`}
                                 >

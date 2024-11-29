@@ -27,8 +27,12 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     const audioChunksRef = useRef<Blob[]>([]);
     const { messages, sendMessage, close } = replay === "False" ? useWebSocket(`${environment.WS_URL}/ws`) : {};
     useEffect(() => {
-        if (messages) {
-            console.log(messages.length > 0 ? JSON.parse(messages[messages.length - 1]) : '')
+        if (messages && messages.length > 0) {
+            let new_data = { ...data }
+            new_data.transcription = { data: messages }
+            // correct_transcription({ data: messages })
+            setData(new_data)
+            console.log(messages[messages.length - 1])
         }
     }, [messages])
 
@@ -105,12 +109,31 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     };
     const pauseRecording = () => {
         mediaRecorderRef.current?.pause()
-        setState(mediaRecorderRef.current?.state)
+        setState("paused")
     }
 
     const resumeRecording = () => {
         mediaRecorderRef.current?.resume()
-        setState(mediaRecorderRef.current?.state)
+        setState("recording")
+    }
+
+    const correct_transcription = (messages: any) => {
+        messages.data.forEach(async (message: any) => {
+            const res = await fetch(`${environment.BE_URL}/llm/correct_transcription`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    original_sentence: message.transcript
+                }),
+            })
+                .catch((e: any) => {
+                    return e
+                })
+            const correct = await res.json();
+            // console.log(correct)
+        });
     }
 
     useEffect(() => {
@@ -172,6 +195,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                                     const json = await response.json();
                                     let new_data = { ...data }
                                     new_data.transcription = json
+                                    correct_transcription(json)
                                     setData(new_data)
                                 }}>Phiên âm</Button>
                             </>
