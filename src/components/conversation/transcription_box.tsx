@@ -37,6 +37,15 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
             }
         }
         else {
+            data.forEach((item: any) => {
+                if (!Object.keys(lst_speaker_map).includes(item.speaker)) {
+                    setLstSpeakerMap((prev: any) => {
+                        let new_data = { ...prev }
+                        new_data[item.speaker] = colors[Object.keys(prev).length % colors.length]
+                        return new_data
+                    })
+                }
+            })
             console.log(data)
         }
     }, [data])
