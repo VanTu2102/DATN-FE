@@ -40,4 +40,13 @@ export default class Account {
             }
         })
     }
+
+    findDetailAccount() {
+        "use server";
+        return prisma.account.findUnique({
+            where: {
+                email: this.email
+            }
+        })
+    }
 }

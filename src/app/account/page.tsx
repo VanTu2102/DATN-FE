@@ -1,10 +1,10 @@
 import MainLayout from "@/components/MainLayout";
+import AccountView from "@/views/AccountView";
 import { Flex } from "antd";
-import prisma from 'src/actions/db'
+import { Metadata } from "next";
 
-const disconnect = async () => {
-  "use server";
-  return await prisma.$disconnect()
+export const metadata: Metadata = {
+  title: 'Account'
 }
 
 
@@ -15,8 +15,8 @@ const AccountPage = () => {
         vertical
         justify="center"
         align="center"
-        className="h-full w-full">
-            <></>
+        className="h-full w-full mt-[64px]">
+        <AccountView />
       </Flex>
     </MainLayout>
   )

@@ -27,3 +27,9 @@ export const findAccountByEmail = async (email: any) => {
     const account = await acc.findAccount(false)
     return account
 };
+
+export const findDetailAccountByEmail = async (email: any) => {
+    const acc = new Account(email)
+    const account = await acc.findDetailAccount()
+    return account
+};
