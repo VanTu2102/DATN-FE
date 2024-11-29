@@ -24,16 +24,20 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
     ]
 
     useEffect(() => {
-        console.log(data)
-        if (data && data.length > 0 && replay === "True") {
-            fetch(`${environment.BE_URL}/transcription/speaker_lst?id=${data[0]['transcriptionId']}`).then(async (response: any) => {
-                const lst_speaker = await response.json();
-                let lst: any = {}
-                lst_speaker.forEach((e: any, i: any) => {
-                    lst[e.speaker] = colors[i % colors.length]
+        if (replay === "True") {
+            if (data && data.length > 0) {
+                fetch(`${environment.BE_URL}/transcription/speaker_lst?id=${data[0]['transcriptionId']}`).then(async (response: any) => {
+                    const lst_speaker = await response.json();
+                    let lst: any = {}
+                    lst_speaker.forEach((e: any, i: any) => {
+                        lst[e.speaker] = colors[i % colors.length]
+                    })
+                    setLstSpeakerMap(lst)
                 })
-                setLstSpeakerMap(lst)
-            })
+            }
+        }
+        else {
+            console.log(data)
         }
     }, [data])
     return (
