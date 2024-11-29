@@ -3,7 +3,7 @@
 import { FC, ReactNode, useEffect, useMemo, useState } from "react";
 import { Layout as AntdLayout, Button, Menu, theme, Modal, Upload, message } from 'antd';
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import { AiFillBook, AiOutlineMenu } from 'react-icons/ai'
+import { AiOutlineHome, AiOutlineSetting } from 'react-icons/ai'
 import { MenuItem } from "@/types/layout.type"
 import { usePathname, useRouter } from "next/navigation"
 import Guard from "./guard"
@@ -22,9 +22,14 @@ interface IProps {
 const MainLayout: FC<IProps> = ({
   title, children, menuItems = [
     {
-      icon: <AiFillBook />,
+      icon: <AiOutlineHome />,
       label: 'Home',
       route: '/home'
+    },
+    {
+      icon: <AiOutlineSetting />,
+      label: 'Account',
+      route: '/account'
     },
   ]
 }) => {
@@ -104,8 +109,8 @@ const MainLayout: FC<IProps> = ({
   function handleMenuClicked(key: string) {
     const menuItem = antdMenuItems.find(v => v.key === key)
     if (menuItem?.route) {
-      router.push(menuItem.route)
       setTitle(menuItem.label)
+      router.push(menuItem.route)
     }
   }
 

@@ -10,7 +10,7 @@ const disconnect = async () => {
 
 const AccountPage = () => {
   return (
-    <MainLayout>
+    <MainLayout title="Account">
       <Flex
         vertical
         justify="center"

@@ -15,6 +15,7 @@ model Account {
   email        String         @unique
   password     String
   name         String?
+  language     String         @default("vi")
   Conversation Conversation[]
   type         String?
 }
