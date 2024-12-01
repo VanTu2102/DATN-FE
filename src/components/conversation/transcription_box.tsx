@@ -34,6 +34,17 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
                     })
                     setLstSpeakerMap(lst)
                 })
+                    .catch(() => {
+                        data.forEach((item: any) => {
+                            if (!Object.keys(lst_speaker_map).includes(item.speaker)) {
+                                setLstSpeakerMap((prev: any) => {
+                                    let new_data = { ...prev }
+                                    new_data[item.speaker] = colors[Object.keys(prev).length % colors.length]
+                                    return new_data
+                                })
+                            }
+                        })
+                    })
             }
         }
         else {
@@ -56,13 +67,6 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
                     <div className="space-y-6 py-4 text-[14px] leading-7 text-gray-600 h-[400px] overflow-y-auto">
                         <ul className="space-y-4 px-2">
                             {data?.map((item: any, index: number) => {
-                                if (!Object.keys(lst_speaker_map).includes(item.speaker)) {
-                                    setLstSpeakerMap((prev: any) => {
-                                        let new_data = { ...prev }
-                                        new_data[item.speaker] = colors[Object.keys(prev).length % colors.length]
-                                        return new_data
-                                    })
-                                }
                                 return <li
                                     key={index}
                                     className={`flex flex-col justify-center items-start ${item.role === "user" ? "ml-10 justify-end" : "mr-10"
