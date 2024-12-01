@@ -29,11 +29,10 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
     const save = (e: any) => {
         setData(data.map((item: any, index: number) => {
             if (item.id === mess.id) {
-                console.log(item)
                 let new_data = {
                     ...item,
                     transcript: item.transcript,
-                    correct_transcript: mess.transcript
+                    correct_transcript: mess.correct_transcript ? mess.correct_transcript : mess.transcript
                 }
                 updateMessage(new_data.id, new_data.speaker, new_data.transcriptionId, new_data.start_time, new_data.end_time, new_data.transcript, new_data.correct_transcript).then((res: any) => {
                     setMess(null)
@@ -45,7 +44,6 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
     };
 
     useEffect(() => {
-        console.log(data)
         if (replay === "True") {
             if (data && data.length > 0) {
                 fetch(`${environment.BE_URL}/transcription/speaker_lst?id=${data[0]['transcriptionId']}`).then(async (response: any) => {
@@ -79,7 +77,6 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
                     })
                 }
             })
-            console.log(data)
         }
     }, [data])
     return (
@@ -111,7 +108,7 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
             {mess ? <div className="absolute w-full bottom-0 divide-y divide-gray-300/50 border-t border-gray-300/50">
                 <div className="flex justify-between flex-col items-start mt-4 text-gray-700">
                     <Input className="py-2"
-                        name="transcript"
+                        name={mess.correct_transcript ? 'correct_transcript' : 'transcript'}
                         value={mess.correct_transcript ? mess.correct_transcript : mess.transcript}
                         onChange={handleChange}
                         onPressEnter={save}
