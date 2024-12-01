@@ -1,18 +1,15 @@
 'use client'
 
-import { findDetailAccountByEmail } from "@/controllers/account"
-import { Button, Flex, Modal, Input } from "antd"
+import { findDetailAccountByEmail, updateAccount } from "@/controllers/account"
+import { Button, Flex, Modal, Input, notification } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FC, useEffect, useState } from "react"
 
 interface IProps { }
 
 const AccountView: FC<IProps> = ({ }) => {
-    const [formData, setFormData] = useState({
-        email: "vantu2102@gmail.com",
-        password: "abc",
-        name: "Hoàng Tú",
-    });
+    const [acc, setAcc] = useState<any>(null);
+    const [formData, setFormData] = useState<any>(null);
     const searchParams = useSearchParams()
     const router = useRouter()
     const [open, setOpen] = useState(false);
@@ -24,10 +21,14 @@ const AccountView: FC<IProps> = ({ }) => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const languageChange = (e: any) => {
+        setAcc({ ...acc, 'language': e.target.value });
+    };
+
     useEffect(() => {
         findDetailAccountByEmail(localStorage.getItem('email')).then(async (acc: any) => {
-            // setAcc(acc)
-            console.log(acc)
+            setFormData({ ...acc })
+            setAcc(acc)
         })
         if (next) {
             router.push(next.replaceAll(',', "&"))
@@ -42,12 +43,23 @@ const AccountView: FC<IProps> = ({ }) => {
     };
 
     const handleOk = () => {
+        setOpen(false);
+        setAcc(formData)
+    };
+
+    const save = () => {
+        updateAccount(acc.id, acc.email, acc.password, acc.name, acc.type, acc.language).then(async (acc: any) => {
+            notification.success({ duration: 1, message: "Cập nhật thành công" })
+        })
+            .catch((e: any) => {
+                notification.error({ duration: 1, message: e.toString() })
+            })
     };
 
     return <>
         <Flex justify="center" align="center" className="w-full flex-col pt-5">
             <div className="flex w-full justify-center px-8 py-2">
-                <div className="w-full max-w-[900px] px-12 bg-white rounded-lg shadow-md flex flex-col">
+                {acc ? <div className="w-full max-w-[900px] px-12 bg-white rounded-lg shadow-md flex flex-col">
                     <div className="mt-6 flex justify-between items-center font-semibold">
                         <div className="text-[24px]">Profile</div>
                         <div className="text-blue-500 hover:underline hover:cursor-pointer" onClick={showModal}>Edit</div>
@@ -85,36 +97,36 @@ const AccountView: FC<IProps> = ({ }) => {
                             </div>
                         </Modal>
                     </div>
-                    <div className="mt-6 grid-cols-2 grid">
+                    <div className="mt-3 grid-cols-2 grid">
                         <div className="flex justify-between flex-col items-start mt-4 text-gray-700">
                             <p>Email</p>
-                            <p className="font-medium">vantu2102@gmail.com</p>
+                            <p className="font-medium">{acc.email}</p>
                         </div>
                         <div className="flex justify-between flex-col items-start mt-4 text-gray-700">
                             <p>Password</p>
-                            <p className="font-medium">********</p>
+                            <p className="font-medium">{acc.password.split('').map((char: any) => { return "*" })}</p>
                         </div>
                         <div className="flex justify-between flex-col items-start mt-4 text-gray-700">
                             <p>Name</p>
-                            <p className="font-medium">Hoàng Tú</p>
+                            <p className="font-medium">{acc.name}</p>
                         </div>
                     </div>
 
-                    {/* Language Section */}
                     <div className="mt-8 border-t pt-4 text-gray-700">
                         <p className="text-sm">Language</p>
                         <select
                             className="mt-2 p-2 w-full border rounded-md text-gray-700 focus:outline-none"
-                            defaultValue="vi"
+                            defaultValue={`${acc.language}`}
+                            onChange={languageChange}
                         >
                             <option value="en">English</option>
                             <option value="vi">Vietnamese</option>
                         </select>
                     </div>
                     <div className="my-8 border-t pt-4 flex w-full justify-end">
-                        <Button type="primary" className=" font-semibold">Save</Button>
+                        <Button type="primary" className=" font-semibold" onClick={save}>Save</Button>
                     </div>
-                </div>
+                </div> : <></>}
             </div>
         </Flex>
     </>

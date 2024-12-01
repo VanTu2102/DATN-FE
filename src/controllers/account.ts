@@ -22,6 +22,12 @@ export const signin = async (email: any, password: any) => {
     return false
 };
 
+export const updateAccount = async (id: number, email: any, password: any, name?: string, type?: 'google' | undefined, language?: string) => {
+    const acc = new Account(email, password, name, type, language)
+    const account = await acc.updateAccount(id)
+    return account
+};
+
 export const findAccountByEmail = async (email: any) => {
     const acc = new Account(email)
     const account = await acc.findAccount(false)
