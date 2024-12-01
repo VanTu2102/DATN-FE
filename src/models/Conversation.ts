@@ -74,7 +74,20 @@ export default class Conversation {
                 type: true,
                 transcription: {
                     select: {
-                        data: true,
+                        data: {
+                            orderBy: {
+                                id: 'asc' // Sắp xếp theo id tăng dần, dùng 'desc' nếu muốn giảm dần
+                            },
+                            select: {
+                                id: true,
+                                transcriptionId: true,
+                                transcript: true,
+                                start_time: true,
+                                end_time: true,
+                                correct_transcript: true,
+                                speaker: true
+                            }
+                        },
                         conversationId: true,
                         id: true
                     }
