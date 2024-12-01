@@ -1,6 +1,7 @@
 "use server"
 import { base64ToUint8Array } from "@/functions/data_convert/data_convert";
 import Conversation from "@/models/Conversation";
+import Message from "@/models/Message";
 
 const conservation_global = new Conversation()
 
@@ -26,6 +27,21 @@ export const findAllRecord = async (accountId: any) => {
 export const updateRecord = async (id: number, name?: string, data?: string, time?: number) => {
     const conservation = new Conversation(undefined, name, data ? Buffer.from(base64ToUint8Array(data)) : undefined, undefined, undefined, time)
     return conservation.updateRecord(id)!.then((v: any) => {
+        return v
+    }).catch((e: any) => {
+        return "Error"
+    })
+};
+
+export const updateMessage = async (id: number,
+    speaker: string,
+    transcriptionId: number,
+    start_time: number,
+    end_time: number,
+    transcript: string,
+    correct_transcript?: string) => {
+    const message = new Message(id, speaker, transcriptionId, start_time, end_time, transcript, correct_transcript)
+    return message.updateMessage(id)!.then((v: any) => {
         return v
     }).catch((e: any) => {
         return "Error"

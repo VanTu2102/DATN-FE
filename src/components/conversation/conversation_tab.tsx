@@ -163,7 +163,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     }, [time, state_record])
     if (replay === "False") {
         return (
-            <div className="w-full h-max">
+            <div className="w-full h-full">
                 <div className="flex fixed bottom-4">
                     {state_record === "recording" ? <Button type="primary" className="my-2 text-[14px] mr-2 font-semibold" onClick={pauseRecording}>Tạm dừng</Button> : <></>}
                     {state_record === "paused" ? <Button type="primary" className="my-2 text-[14px] mr-2 font-semibold" onClick={resumeRecording}>Tiếp tục</Button> : <></>}
@@ -183,7 +183,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     }
     else {
         return (
-            <div className="w-full h-max">
+            <div className="w-full h-full">
                 {audioDom}
                 {data ?
                     (
@@ -199,12 +199,26 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                             </>
                             :
                             <>
-                                <TranscriptionBox data={data.transcription.data}></TranscriptionBox>
+                                <TranscriptionBox data={data.transcription.data} setData={(v: any) => {
+                                    setData({
+                                        ...data,
+                                        transcription: {
+                                            data: v
+                                        }
+                                    })
+                                }}></TranscriptionBox>
                             </>
                     )
                     :
                     <>
-                        <TranscriptionBox data={data?.transcription?.data}></TranscriptionBox>
+                        <TranscriptionBox data={data?.transcription?.data} setData={(v: any) => {
+                            setData({
+                                ...data,
+                                transcription: {
+                                    data: v
+                                }
+                            })
+                        }}></TranscriptionBox>
                     </>
                 }
             </div>
