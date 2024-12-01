@@ -37,15 +37,16 @@ model Transcription {
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   conversationId Int          @unique
   createdDate    DateTime     @updatedAt()
-  data Message[]
+  data           Message[]
 }
 
 model Message {
-  id             Int           @id @default(autoincrement())
-  speaker        String
-  transcript     String
-  start_time     Float
-  end_time       Float
-  transcription   Transcription @relation(fields: [transcriptionId], references: [id])
-  transcriptionId Int
+  id                 Int           @id @default(autoincrement())
+  speaker            String
+  transcript         String
+  correct_transcript String?
+  start_time         Float
+  end_time           Float
+  transcription      Transcription @relation(fields: [transcriptionId], references: [id])
+  transcriptionId    Int
 }
