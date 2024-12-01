@@ -92,13 +92,13 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
                                         }`}
                                 >
                                     <span className="">{item.speaker}</span>
-                                    <p className="p-4 pt-2 pb-6 rounded-md relative flex items-center" style={{ backgroundColor: lst_speaker_map[item.speaker] }}>{item.correct_transcript ? item.correct_transcript : item.transcript}
+                                    <div className="p-4 pt-2 pb-6 rounded-md relative flex items-center" style={{ backgroundColor: lst_speaker_map[item.speaker] }}>{item.correct_transcript ? item.correct_transcript : item.transcript}
                                         <span className="text-[10px] absolute bottom-0 right-[10px]">{Math.round(item.start_time)}s - {Math.round(item.end_time)}s</span>
                                         {item.id ? <div onClick={() => { setMess(item) }}
                                             className="absolute right-[-40px] top-4 rounded-full border hover:cursor-pointer w-8 h-8 flex justify-center items-center">
                                             <EditOutlined></EditOutlined>
                                         </div> : <></>}
-                                    </p>
+                                    </div>
                                 </li>
                             })}
                         </ul>
