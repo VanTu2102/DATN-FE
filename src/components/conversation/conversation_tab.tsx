@@ -25,7 +25,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     const [state_record, setState] = useState<any>(null)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
-    const { messages, sendMessage, close } = replay === "False" ? useWebSocket(`${environment.WS_URL}/ws`) : {};
+    const { messages, sendMessage, close } = useWebSocket(`${environment.WS_URL}/ws`);
     useEffect(() => {
         if (messages && messages.length > 0) {
             let new_data = { ...data }
@@ -100,6 +100,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         }
     };
     const stopRecording = () => {
+        close
         if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
             mediaRecorderRef.current.stop();
         }
@@ -138,7 +139,9 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     useEffect(() => {
         if (replay === "False") {
             if (data) {
-                startRecording()
+                if (!mediaRecorderRef.current?.state) {
+                    startRecording()
+                }
             }
         }
         else {
