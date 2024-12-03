@@ -58,14 +58,14 @@ export const updateMessage = async (id: number,
     })
 };
 
-export const createMessage = async (id: number,
+export const createMessage = async (
     speaker: string,
     transcriptionId: number,
     start_time: number,
     end_time: number,
     transcript: string,
     correct_transcript?: string) => {
-    const message = new Message(id, speaker, transcriptionId, start_time, end_time, transcript, correct_transcript)
+    const message = new Message(undefined, speaker, transcriptionId, start_time, end_time, transcript, correct_transcript)
     return message.createMessage()!.then((v: any) => {
         return v
     }).catch((e: any) => {

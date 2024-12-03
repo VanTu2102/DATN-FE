@@ -22,20 +22,19 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     const router = useRouter()
     const [audioDom, setAudioDom] = useState<any>(<audio controls className="w-full bg-white p-1 rounded-full"></audio>)
     const timeCounter = useRef<number>(0)
-    const transcriptionId = useRef<number>()
     const [time, setTime] = useState<number>(0)
     const [state_record, setState] = useState<any>(null)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
-    const { messages, sendMessage, close } = useWebSocket(`${environment.WS_URL}/ws`);
+    const { messages, transcriptionId, sendMessage, close } = useWebSocket(`${environment.WS_URL}/ws`);
     useEffect(() => {
         if (messages) {
             if (messages.length > 0) {
                 let new_data = { ...data }
                 new_data.transcription = correct_transcription({
-                    id: transcriptionId.current,
                     data: messages
                 })
+                console.log(messages[messages.length - 1])
                 setData(new_data)
             }
             else {
