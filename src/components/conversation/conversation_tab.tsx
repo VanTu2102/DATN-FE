@@ -100,7 +100,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         }
     };
     const stopRecording = () => {
-        close()
+        // close()
         if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
             mediaRecorderRef.current.stop();
         }
