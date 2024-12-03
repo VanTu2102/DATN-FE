@@ -95,9 +95,9 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                     blobToUint8Array(wavBlob).then((unit8arr_data: any) => {
                         updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
                             findUniqueRecord(data.id).then((v: any) => {
-                                router.push(`/conversation?id=${data.id}&replay=True`)
                                 setData(v)
                                 setState(mediaRecorderRef.current?.state)
+                                router.push(`/conversation?id=${data.id}&replay=True`)
                             })
                         })
                     })
