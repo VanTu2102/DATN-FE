@@ -2,6 +2,7 @@
 import { base64ToUint8Array } from "@/functions/data_convert/data_convert";
 import Conversation from "@/models/Conversation";
 import Message from "@/models/Message";
+import Transcription from "@/models/Transcription";
 
 const conservation_global = new Conversation()
 
@@ -33,6 +34,15 @@ export const updateRecord = async (id: number, name?: string, data?: string, tim
     })
 };
 
+export const createTranscription = async (conversationId: number) => {
+    const transcription = new Transcription(conversationId)
+    return transcription.createTranscription()!.then((v: any) => {
+        return v.id
+    }).catch((e: any) => {
+        return "Error"
+    })
+};
+
 export const updateMessage = async (id: number,
     speaker: string,
     transcriptionId: number,
@@ -42,6 +52,21 @@ export const updateMessage = async (id: number,
     correct_transcript?: string) => {
     const message = new Message(id, speaker, transcriptionId, start_time, end_time, transcript, correct_transcript)
     return message.updateMessage(id)!.then((v: any) => {
+        return v
+    }).catch((e: any) => {
+        return "Error"
+    })
+};
+
+export const createMessage = async (id: number,
+    speaker: string,
+    transcriptionId: number,
+    start_time: number,
+    end_time: number,
+    transcript: string,
+    correct_transcript?: string) => {
+    const message = new Message(id, speaker, transcriptionId, start_time, end_time, transcript, correct_transcript)
+    return message.createMessage()!.then((v: any) => {
         return v
     }).catch((e: any) => {
         return "Error"

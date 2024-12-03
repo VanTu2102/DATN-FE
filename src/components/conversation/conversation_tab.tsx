@@ -1,5 +1,5 @@
 "use client";
-import { findUniqueRecord, updateRecord } from "@/controllers/conversation";
+import { createTranscription, findUniqueRecord, updateRecord } from "@/controllers/conversation";
 import { blobToPCM, encodeWAV, resamplePCM } from "@/functions/audio/audio_process";
 import { blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
 import { Button } from "antd"
@@ -18,19 +18,31 @@ interface IProps {
 const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) => {
     const searchParams = useSearchParams()
     const replay = searchParams.get('replay')
+    const id = searchParams.get('id')
     const router = useRouter()
     const [audioDom, setAudioDom] = useState<any>(<audio controls className="w-full bg-white p-1 rounded-full"></audio>)
     const timeCounter = useRef<number>(0)
+    const transcriptionId = useRef<number>()
     const [time, setTime] = useState<number>(0)
     const [state_record, setState] = useState<any>(null)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
     const { messages, sendMessage, close } = useWebSocket(`${environment.WS_URL}/ws`);
     useEffect(() => {
-        if (messages && messages.length > 0) {
-            let new_data = { ...data }
-            new_data.transcription = correct_transcription({ data: messages })
-            setData(new_data)
+        if (messages) {
+            if (messages.length > 0) {
+                let new_data = { ...data }
+                new_data.transcription = correct_transcription({
+                    id: transcriptionId.current,
+                    data: messages
+                })
+                setData(new_data)
+            }
+            else {
+                createTranscription(parseInt(id!)).then((v: any) => {
+                    transcriptionId.current = v
+                })
+            }
         }
     }, [messages])
 
@@ -85,11 +97,9 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                     blobToUint8Array(wavBlob).then((unit8arr_data: any) => {
                         updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
                             findUniqueRecord(data.id).then((v: any) => {
-                                let new_data = { ...v }
-                                new_data.transcription = correct_transcription({ data: messages })
-                                setData(new_data)
-                                setState(mediaRecorderRef.current?.state)
                                 router.push(`/conversation?id=${data.id}&replay=True`)
+                                setData(v)
+                                setState(mediaRecorderRef.current?.state)
                             })
                         })
                     })
