@@ -84,9 +84,12 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                     const wavBlob = encodeWAV(pcmData, sampleRate, numberOfChannels);
                     blobToUint8Array(wavBlob).then((unit8arr_data: any) => {
                         updateRecord(data.id, data.name, uint8ArrayToBase64(unit8arr_data), timeCounter.current).then((v: any) => {
-                            router.push(`/conversation?id=${data.id}&replay=True`)
                             findUniqueRecord(data.id).then((v: any) => {
-                                setData(v)
+                                let new_data = { ...v }
+                                new_data.transcription = correct_transcription({ data: messages })
+                                setData(new_data)
+                                setState(mediaRecorderRef.current?.state)
+                                router.push(`/conversation?id=${data.id}&replay=True`)
                             })
                         })
                     })
@@ -104,7 +107,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
             mediaRecorderRef.current.stop();
         }
-        setState(mediaRecorderRef.current?.state)
     };
     const pauseRecording = () => {
         mediaRecorderRef.current?.pause()
@@ -138,7 +140,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
 
     useEffect(() => {
         if (replay === "False") {
-            if (data) {
+            if (data && !data.data) {
                 if (!mediaRecorderRef.current?.state) {
                     startRecording()
                 }
