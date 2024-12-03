@@ -34,7 +34,6 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 new_data.transcription = correct_transcription({
                     data: messages
                 })
-                console.log(messages[messages.length - 1])
                 setData(new_data)
             }
             else {
