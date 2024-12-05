@@ -17,8 +17,9 @@ export const saveRecord = async (accountId: number, name: string, type: 'file' |
 
 export const findUniqueRecord = async (id: any) => {
     const record: any = await conservation_global.findUniqueRecord(id)
-    let new_obj = {...record,
-        data: record?.data.toString('base64')
+    let new_obj = {
+        ...record,
+        data: record?.data ? record?.data.toString('base64') : undefined
     }
     return new_obj
 };

@@ -94,7 +94,7 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
                                 >
                                     <span className="">{item.speaker}</span>
                                     <div className="p-4 pt-2 pb-6 rounded-md relative flex items-center min-w-[10%] max-w-[80%]" style={{ backgroundColor: lst_speaker_map[item.speaker] }}>{item.correct_transcript ? item.correct_transcript : item.transcript}
-                                        <span className="text-[10px] absolute bottom-0 right-[10px]">{formatDuration(Math.round(item.start_time))}s - {formatDuration(Math.round(item.end_time))}s</span>
+                                        <span className="text-[10px] absolute bottom-0 right-[10px]">{formatDuration(Math.round(item.start_time))} - {formatDuration(Math.round(item.end_time))}</span>
                                         {item.id ? <div onClick={() => { setMess(item) }}
                                             className="absolute right-[-40px] top-4 rounded-full border hover:cursor-pointer w-8 h-8 flex justify-center items-center">
                                             <EditOutlined></EditOutlined>
