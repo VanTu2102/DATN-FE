@@ -1,7 +1,7 @@
 "use client";
 import { createTranscription, findUniqueRecord, updateRecord } from "@/controllers/conversation";
 import { blobToPCM, encodeWAV, resamplePCM } from "@/functions/audio/audio_process";
-import { blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
+import { base64ToUint8Array, blobToUint8Array, uint8ArrayToBase64 } from "@/functions/data_convert/data_convert";
 import { Button } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FC, useEffect, useRef, useState } from "react"
@@ -37,9 +37,11 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                 setData(new_data)
             }
             else {
-                createTranscription(parseInt(id!)).then((v: any) => {
-                    transcriptionId.current = v
-                })
+                if (replay === "False") {
+                    createTranscription(parseInt(id!)).then((v: any) => {
+                        transcriptionId.current = v
+                    })
+                }
             }
         }
     }, [messages])
@@ -156,7 +158,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
         }
         else {
             if (data && data.data) {
-                const url = URL.createObjectURL(new Blob([Buffer.from(data && data.data ? data!.data!.data : [])], { type: 'audio/wav' }))
+                const url = URL.createObjectURL(new Blob([Buffer.from(base64ToUint8Array(data && data.data ? data!.data : ''))], { type: 'audio/wav' }))
                 setAudioDom(
                     <audio controls className="w-full bg-white p-1 rounded-full">
                         <source src={url} type="audio/wav"></source>
