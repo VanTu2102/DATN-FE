@@ -8,6 +8,7 @@ import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai'
 import { formatDuration } from "@/functions/time/time_convert"
 import ConversationTab from "@/components/conversation/conversation_tab"
+import environment from "@/util/environment"
 
 const { TabPane } = Tabs;
 interface IProps { }
@@ -35,6 +36,9 @@ const CoversationView: FC<IProps> = ({ }) => {
         }
 
     }, [id])
+    useEffect(() => {
+        console.log(data)
+    }, [data])
     return <>
         <Flex justify="center" align="center" className="w-full">
             <div className="w-full h-max min-h-26 bg-white border border-[#eeeeee] shadow-md px-6 py-4 flex flex-col font-semibold">
@@ -45,10 +49,18 @@ const CoversationView: FC<IProps> = ({ }) => {
                 </div>
                 <Tabs defaultActiveKey="1">
                     <TabPane tab="Conversation" key="1">
-                        <ConversationTab data={data} setTimeCounter={setTime} setData={setData}/>
+                        <ConversationTab data={data} setTimeCounter={setTime} setData={setData} />
                     </TabPane>
                     {replay === "True" ? <TabPane tab="Summary" disabled={data?.transcription === null} key="2">
                         Summary
+                        <div className="mt-5">{data?.transcription?.summary ? data?.transcription?.summary : "Chưa có bản tóm tắt!"}</div>
+                        {data?.transcription?.summary ?
+                            <></> :
+                            <Button type="primary" className="my-5 text-[14px] font-semibold" onClick={async () => {
+                                const response = await fetch(`${environment.BE_URL}/llm/summarize?id=${data?.transcription?.id}`)
+                                const json = await response.json();
+                                console.log(json)
+                            }}>Tóm tắt</Button>}
                     </TabPane> : <></>}
                 </Tabs>
             </div>

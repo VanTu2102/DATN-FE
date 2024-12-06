@@ -38,6 +38,7 @@ model Transcription {
   conversationId Int          @unique
   createdDate    DateTime     @updatedAt()
   data           Message[]
+  summary        String?
 }
 
 model Message {

@@ -52,7 +52,8 @@ export default class Conversation {
                     select: {
                         data: true,
                         conversationId: true,
-                        id: true
+                        id: true,
+                        summary: true
                     }
                 },
                 data: true,
@@ -89,7 +90,8 @@ export default class Conversation {
                             }
                         },
                         conversationId: true,
-                        id: true
+                        id: true,
+                        summary: true
                     }
                 },
                 data: true,
