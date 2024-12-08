@@ -206,10 +206,11 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                             <>
                                 <Button type="primary" className="my-2 text-[14px] font-semibold" onClick={async () => {
                                     const response = await fetch(`${environment.BE_URL}/transcription/file?id=${data.id}`)
-                                    const json = await response.json();
-                                    let new_data = { ...data }
-                                    new_data.transcription = correct_transcription(json)
-                                    setData(new_data)
+                                    findUniqueRecord(parseInt(id!)).then((v: any) => {
+                                        if (v) {
+                                            setData(v)
+                                        }
+                                    })
                                 }}>Phiên âm</Button>
                             </>
                             :
