@@ -53,13 +53,17 @@ const CoversationView: FC<IProps> = ({ }) => {
                     </TabPane>
                     {replay === "True" ? <TabPane tab="Summary" disabled={data?.transcription === null} key="2">
                         Summary
-                        <div className="mt-5">{data?.transcription?.summary ? data?.transcription?.summary : "Chưa có bản tóm tắt!"}</div>
+                        <div className="mt-5">{data?.transcription?.summary ? data?.transcription?.summary.split("\n").map((line: any, index: any) => <p key={index}>{line}</p>) : "Chưa có bản tóm tắt!"}</div>
                         {data?.transcription?.summary ?
                             <></> :
                             <Button type="primary" className="my-5 text-[14px] font-semibold" onClick={async () => {
                                 const response = await fetch(`${environment.BE_URL}/llm/summarize?id=${data?.transcription?.id}`)
                                 const json = await response.json();
-                                console.log(json)
+                                findUniqueRecord(parseInt(id!)).then((v: any) => {
+                                    if (v) {
+                                        setData(v)
+                                    }
+                                })
                             }}>Tóm tắt</Button>}
                     </TabPane> : <></>}
                 </Tabs>
