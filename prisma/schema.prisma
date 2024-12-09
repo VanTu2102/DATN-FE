@@ -42,12 +42,21 @@ model Transcription {
 }
 
 model Message {
-  id                 Int           @id @default(autoincrement())
+  id                 Int             @id @default(autoincrement())
   speaker            String
   transcript         String
   correct_transcript String?
   start_time         Float
   end_time           Float
-  transcription      Transcription @relation(fields: [transcriptionId], references: [id])
+  transcription      Transcription   @relation(fields: [transcriptionId], references: [id])
   transcriptionId    Int
+  MessageVector      MessageVector[]
+}
+
+model MessageVector {
+  id        Int     @id @default(autoincrement())
+  chunk     Float
+  vector    Float[]
+  message   Message @relation(fields: [messageId], references: [id])
+  messageId Int
 }
