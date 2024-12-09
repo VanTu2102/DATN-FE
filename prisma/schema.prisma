@@ -50,4 +50,5 @@ model Message {
   end_time           Float
   transcription      Transcription @relation(fields: [transcriptionId], references: [id])
   transcriptionId    Int
+  embedding          Float[]
 }
