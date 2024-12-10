@@ -4,11 +4,12 @@ import { findUniqueRecord } from "@/controllers/conversation"
 import { Button, Flex, Space, Tabs } from "antd"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FC, useEffect, useState } from "react"
-import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai'
+import { AiOutlineCalendar, AiOutlineClockCircle, AiOutlineWechat } from 'react-icons/ai'
 import { formatDuration } from "@/functions/time/time_convert"
 import ConversationTab from "@/components/conversation/conversation_tab"
 import environment from "@/util/environment"
+import useWebSocket from "@/hooks/useWebSocket"
+import ChatBot from "@/components/conversation/chatbot"
 
 const { TabPane } = Tabs;
 interface IProps { }
@@ -16,10 +17,12 @@ interface IProps { }
 const CoversationView: FC<IProps> = ({ }) => {
     const [data, setData] = useState<any>()
     const [time, setTime] = useState<number>(0)
+    const [openChatbot, setOpenChatbot] = useState<boolean>(false)
     const router = useRouter()
     const searchParams = useSearchParams()
     const replay = searchParams.get('replay')
     const id = searchParams.get('id')
+    const openchatbot = () => { setOpenChatbot(true) }
     useEffect(() => {
         if (id) {
             findUniqueRecord(parseInt(id)).then((v: any) => {
@@ -45,7 +48,8 @@ const CoversationView: FC<IProps> = ({ }) => {
                 <span className="text-2xl">{data?.name}</span>
                 <div className="flex items-center mt-2">
                     <span className="text-xs py-2 text-[#6c6c6c] flex mr-3"><AiOutlineCalendar className="mr-1" size={16} />{data?.createdDate.toLocaleString()}</span>
-                    <span className="text-xs py-2 text-[#6c6c6c] flex"><AiOutlineClockCircle className="mr-1" size={16} />{formatDuration(data?.time ? data?.time : time)}</span>
+                    <span className="text-xs py-2 text-[#6c6c6c] flex mr-3"><AiOutlineClockCircle className="mr-1" size={16} />{formatDuration(data?.time ? data?.time : time)}</span>
+                    <span className="text-xs py-2 text-[#6c6c6c] flex cursor-pointer" onClick={openchatbot}><AiOutlineWechat className="mr-1" size={16} />Chatbot</span>
                 </div>
                 <Tabs defaultActiveKey="1">
                     <TabPane tab="Conversation" key="1">
@@ -68,6 +72,7 @@ const CoversationView: FC<IProps> = ({ }) => {
                     </TabPane> : <></>}
                 </Tabs>
             </div>
+            {openChatbot && data.transcription ? <ChatBot data={data} setData={setData}></ChatBot> : <></>}
         </Flex>
     </>
 }
