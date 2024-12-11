@@ -21,10 +21,10 @@ const ChatBot: FC<IProps> = ({ data, setData }: IProps) => {
     const router = useRouter()
     const { messages, sendMessage, close } = useWebSocketChat(`${environment.WS_URL}/ws_chat?transcription_id=${data.transcription.id}`);
     useEffect(() => {
+        
         console.log(messages)
-        sendMessage("abc")
     }, [messages])
-    return <></>
+    return <Button onClick={()=>{sendMessage("bộ phim không thời gian được xây dựng trên cơ sở nào?")}}>Click test</Button>
 }
 
 export default ChatBot

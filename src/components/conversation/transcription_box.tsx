@@ -81,7 +81,7 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
         }
     }, [data])
     return (
-        <div className="w-full h-[61dvh] relative">
+        <div className="w-full h-full relative">
             <div className="overflow-y-scroll bg-white h-full pt-4">
                 <div className="divide-y divide-gray-300/50 border-t border-gray-300/50">
                     <div className="space-y-6 py-4 text-[14px] leading-7 text-gray-600 h-[400px] overflow-y-auto">
