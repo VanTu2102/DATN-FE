@@ -71,7 +71,7 @@ const CoversationView: FC<IProps> = ({ }) => {
                     </TabPane> : <></>}
                 </Tabs>
             </div>
-            {openChatbot && data.transcription ? <ChatBot data={data} setData={setData}></ChatBot> : <></>}
+            {openChatbot && data.transcription ? <ChatBot data={data} setOpenChatbot={setOpenChatbot}></ChatBot> : <></>}
         </Flex>
     </>
 }
