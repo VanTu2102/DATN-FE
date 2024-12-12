@@ -84,7 +84,6 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
         <div className="w-full h-full relative">
             <div className="overflow-y-scroll bg-white h-full pt-4">
                 <div className="divide-y divide-gray-300/50 border-t border-gray-300/50">
-                    <div className="space-y-6 py-4 text-[14px] leading-7 text-gray-600 h-[400px] overflow-y-auto">
                         <ul className="space-y-4 px-2">
                             {data?.map((item: any, index: number) => {
                                 return <li
@@ -104,7 +103,6 @@ const TranscriptionBox: FC<IProps> = ({ data, setData }: IProps) => {
                                 </li>
                             })}
                         </ul>
-                    </div>
                 </div>
             </div>
             {mess ? <div className="absolute w-full bottom-0 divide-y divide-gray-300/50 border-t border-gray-300/50">

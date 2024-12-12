@@ -53,7 +53,7 @@ const CoversationView: FC<IProps> = ({ }) => {
                         <ConversationTab data={data} setTimeCounter={setTime} setData={setData} />
                     </TabPane>
                     {replay === "True" ? <TabPane tab="Summary" disabled={data?.transcription === null} key="2">
-                        <div  style={{ height: "calc(100vh - 320px)" }}>
+                        <div style={{ height: "calc(100vh - 320px)" }}>
                             Summary
                             <div className="mt-5 overflow-y-scroll bg-white h-full">{data?.transcription?.summary ? data?.transcription?.summary.split("\n").map((line: any, index: any) => <p key={index}>{line}</p>) : "Chưa có bản tóm tắt!"}</div>
                             {data?.transcription?.summary ?

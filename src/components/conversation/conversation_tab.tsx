@@ -198,7 +198,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     }
     else {
         return (
-            <div className="w-full h-full">
+            <div className="w-full" style={{ height: "calc(100vh - 270px)" }}>
                 {audioDom}
                 {data ?
                     (
