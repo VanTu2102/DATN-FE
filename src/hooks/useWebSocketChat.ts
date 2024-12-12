@@ -34,7 +34,7 @@ const useWebSocketChat = (url: string) => {
         socket.current?.close()
     }
 
-    return { messages, sendMessage, close };
+    return { messages, setMessages, sendMessage, close };
 };
 
 export default useWebSocketChat;
