@@ -8,6 +8,7 @@ import { FC, useEffect, useRef, useState } from "react"
 import TranscriptionBox from "./transcription_box";
 import environment from "@/util/environment";
 import useWebSocket from "@/hooks/useWebSocket";
+import { set } from "@ant-design/plots/es/core/utils";
 
 interface IProps {
     data: any,
@@ -20,6 +21,7 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
     const replay = searchParams.get('replay')
     const id = searchParams.get('id')
     const router = useRouter()
+    const [transcripting, settranscripting] = useState<any>(false)
     const [audioDom, setAudioDom] = useState<any>(<audio controls className="w-full bg-white p-1 rounded-full"></audio>)
     const timeCounter = useRef<number>(0)
     const [time, setTime] = useState<number>(0)
@@ -204,11 +206,13 @@ const ConversationTab: FC<IProps> = ({ data, setTimeCounter, setData }: IProps) 
                     (
                         !data?.transcription ?
                             <>
-                                <Button type="primary" className="my-2 text-[14px] font-semibold" onClick={async () => {
+                                <Button type="primary" loading={transcripting} disabled={transcripting} className="my-2 text-[14px] font-semibold" onClick={async () => {
+                                    settranscripting(true)
                                     const response = await fetch(`${environment.BE_URL}/transcription/file?id=${data.id}`)
                                     findUniqueRecord(parseInt(id!)).then((v: any) => {
                                         if (v) {
                                             setData(v)
+                                            settranscripting(false)
                                         }
                                     })
                                 }}>Phiên âm</Button>
